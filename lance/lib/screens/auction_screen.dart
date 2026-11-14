@@ -255,6 +255,7 @@ class _AuctionScreenState extends State<AuctionScreen> with TickerProviderStateM
                                     indice: g.indiceAtual,
                                     icone: g.tema.icone,
                                     tema: config.temaNome,
+                                    temaId: config.temaId,
                                   ),
                           ),
                         ),

@@ -6,6 +6,7 @@ import '../services/feedback_service.dart';
 import '../theme/app_colors.dart';
 import '../theme/app_text.dart';
 import '../widgets/confetti.dart';
+import '../widgets/foto_item.dart';
 import '../widgets/glow_button.dart';
 import '../widgets/lance_background.dart';
 import '../widgets/lance_card.dart';
@@ -194,7 +195,15 @@ class _ImpostorScreenState extends State<ImpostorScreen> {
           ),
           child: Column(
             children: [
-              LanceIcon(impostor ? LanceIconType.mascara : widget.tema.icone, tamanho: 70),
+              // Quem nao e impostor ve a foto do item; o impostor ve a mascara.
+              if (impostor)
+                const LanceIcon(LanceIconType.mascara, tamanho: 70)
+              else
+                SizedBox(
+                  width: 190,
+                  height: 190,
+                  child: FotoItem(temaId: widget.tema.id, item: _rodada.palavra, icone: widget.tema.icone),
+                ),
               const SizedBox(height: 14),
               FittedBox(
                 fit: BoxFit.scaleDown,

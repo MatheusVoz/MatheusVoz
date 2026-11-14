@@ -6,7 +6,8 @@ import '../theme/app_colors.dart';
 import '../theme/app_text.dart';
 import 'lance_icon.dart';
 
-/// Logo animado: martelo que bate + texto LANCE! com brilho pulsante.
+/// Logo do LANCE!: selo roxo (o mesmo do icone do celular) com o martelo
+/// amarelo batendo, e o nome com a exclamacao em amarelo.
 class LanceLogo extends StatefulWidget {
   final double tamanho;
   const LanceLogo({super.key, this.tamanho = 1});
@@ -16,14 +17,13 @@ class LanceLogo extends StatefulWidget {
 }
 
 class _LanceLogoState extends State<LanceLogo> with TickerProviderStateMixin {
-  // Entrada (uma vez) e loop (martelo batendo + brilho).
   late final AnimationController _entrada = AnimationController(
     vsync: this,
-    duration: const Duration(milliseconds: 1400),
+    duration: const Duration(milliseconds: 1200),
   )..forward();
   late final AnimationController _loop = AnimationController(
     vsync: this,
-    duration: const Duration(milliseconds: 2400),
+    duration: const Duration(milliseconds: 2600),
   )..repeat();
 
   @override
@@ -39,94 +39,130 @@ class _LanceLogoState extends State<LanceLogo> with TickerProviderStateMixin {
     return AnimatedBuilder(
       animation: Listenable.merge([_entrada, _loop]),
       builder: (context, _) {
-        final e = _entrada.value;
-        final escalaEntrada = Curves.elasticOut.transform(e.clamp(0.0, 1.0));
-        // Martelo: levanta e bate no inicio de cada ciclo.
+        final e = Curves.elasticOut.transform(_entrada.value.clamp(0.0, 1.0));
+        // Martelo levanta (0-18%), desce rapido (18-25%) e quica (25-40%).
         final l = _loop.value;
         double angulo;
         if (l < 0.18) {
-          angulo = -0.55 * Curves.easeOut.transform(l / 0.18);
-        } else if (l < 0.26) {
-          angulo = -0.55 + 0.75 * Curves.easeIn.transform((l - 0.18) / 0.08);
+          angulo = -0.5 * Curves.easeOut.transform(l / 0.18);
+        } else if (l < 0.25) {
+          angulo = -0.5 + 0.62 * Curves.easeIn.transform((l - 0.18) / 0.07);
         } else if (l < 0.40) {
-          angulo = 0.2 * (1 - Curves.easeOut.transform((l - 0.26) / 0.14));
+          angulo = 0.12 * (1 - Curves.easeOut.transform((l - 0.25) / 0.15));
         } else {
           angulo = 0;
         }
-        final impacto = (l > 0.25 && l < 0.45) ? (1 - (l - 0.25) / 0.2) : 0.0;
-        final brilho = 18 + 14 * math.sin(l * 2 * math.pi).abs() + 20 * impacto;
+        final impacto = (l > 0.24 && l < 0.5) ? 1 - (l - 0.24) / 0.26 : 0.0;
+        final selo = 132 * s;
 
-        return Transform.scale(
-          scale: 0.4 + 0.6 * escalaEntrada,
-          child: Opacity(
-            opacity: e.clamp(0.0, 1.0),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                SizedBox(
-                  width: 150 * s,
-                  height: 130 * s,
+        return Opacity(
+          opacity: _entrada.value.clamp(0.0, 1.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Transform.scale(
+                scale: 0.5 + 0.5 * e,
+                child: Container(
+                  width: selo,
+                  height: selo,
+                  decoration: BoxDecoration(
+                    gradient: AppColors.gradienteRoxo,
+                    borderRadius: BorderRadius.circular(selo * 0.24),
+                    boxShadow: [
+                      BoxShadow(
+                        color: AppColors.roxo.withValues(alpha: 0.35 + 0.2 * impacto),
+                        blurRadius: 26 * s,
+                        offset: Offset(0, 10 * s),
+                      ),
+                    ],
+                  ),
                   child: Stack(
-                    alignment: Alignment.center,
                     children: [
-                      // Aura neon atras do martelo.
-                      Container(
-                        width: 110 * s,
-                        height: 110 * s,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          boxShadow: [
-                            BoxShadow(
-                              color: AppColors.roxo.withValues(alpha: 0.55),
-                              blurRadius: brilho * s * 2,
-                              spreadRadius: 4 * s,
-                            ),
-                          ],
+                      // Linhas de impacto quando o martelo bate.
+                      if (impacto > 0) Positioned.fill(child: CustomPaint(painter: _Impacto(impacto))),
+                      Center(
+                        child: Transform.rotate(
+                          angle: angulo,
+                          alignment: const Alignment(0.65, 0.75),
+                          child: LanceIcon(LanceIconType.martelo, tamanho: selo * 0.78),
                         ),
-                      ),
-                      // Ondas de impacto.
-                      if (impacto > 0)
-                        Container(
-                          width: (90 + 60 * (1 - impacto)) * s,
-                          height: (90 + 60 * (1 - impacto)) * s,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            border: Border.all(
-                              color: AppColors.neon.withValues(alpha: impacto * 0.8),
-                              width: 3 * s,
-                            ),
-                          ),
-                        ),
-                      Transform.rotate(
-                        angle: angulo,
-                        alignment: const Alignment(0.6, 0.7),
-                        child: LanceIcon(LanceIconType.martelo, tamanho: 120 * s),
                       ),
                     ],
                   ),
                 ),
-                SizedBox(height: 6 * s),
-                Text(
-                  'LANCE!',
-                  style: AppText.titulo(64 * s).copyWith(
-                    shadows: [
-                      Shadow(color: AppColors.neon, blurRadius: brilho),
-                      Shadow(color: AppColors.roxo, blurRadius: brilho * 2),
-                    ],
-                  ),
-                ),
-                Text(
-                  'O LEILÃO DA GALERA',
-                  style: AppText.texto(
-                    15 * s,
-                    cor: AppColors.lilas,
-                  ).copyWith(letterSpacing: 4 * s, fontWeight: FontWeight.w700),
-                ),
-              ],
-            ),
+              ),
+              SizedBox(height: 16 * s),
+              _Marca(tamanho: 58 * s, entrada: e),
+              SizedBox(height: 2 * s),
+              Text(
+                'JOGOS PARA A GALERA',
+                style: AppText.texto(
+                  13 * s,
+                  cor: AppColors.lilas,
+                ).copyWith(letterSpacing: 3.5 * s, fontWeight: FontWeight.w700),
+              ),
+            ],
           ),
         );
       },
     );
   }
+}
+
+/// Nome "LANCE" em roxo escuro com a exclamacao amarela inclinada.
+class _Marca extends StatelessWidget {
+  final double tamanho;
+  final double entrada;
+  const _Marca({required this.tamanho, required this.entrada});
+
+  @override
+  Widget build(BuildContext context) {
+    final contorno = AppText.titulo(tamanho).copyWith(
+      foreground: Paint()
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = tamanho * 0.1
+        ..strokeJoin = StrokeJoin.round
+        ..color = AppColors.roxoEscuro,
+    );
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.end,
+      children: [
+        Text('LANCE', style: AppText.titulo(tamanho, cor: AppColors.roxoEscuro)),
+        Transform.rotate(
+          angle: 0.18 * entrada,
+          child: Stack(
+            children: [
+              Text('!', style: contorno),
+              Text('!', style: AppText.titulo(tamanho, cor: AppColors.neon)),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _Impacto extends CustomPainter {
+  final double t;
+  _Impacto(this.t);
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final p = Paint()
+      ..color = const Color(0xFFFFE680).withValues(alpha: t)
+      ..strokeWidth = size.width * 0.035
+      ..strokeCap = StrokeCap.round;
+    final c = Offset(size.width * 0.78, size.height * 0.68);
+    for (final ang in const [-30.0, -60.0, 0.0]) {
+      final a = ang * math.pi / 180;
+      final d = Offset(math.cos(a), math.sin(a));
+      final r1 = size.width * (0.12 + 0.04 * (1 - t));
+      final r2 = r1 + size.width * 0.08;
+      canvas.drawLine(c + d * r1, c + d * r2, p);
+    }
+  }
+
+  @override
+  bool shouldRepaint(_Impacto old) => old.t != t;
 }

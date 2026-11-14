@@ -5,11 +5,14 @@ import '../services/feedback_service.dart';
 import '../state/settings_controller.dart';
 import '../theme/app_colors.dart';
 import '../theme/app_text.dart';
+import '../widgets/glow_button.dart';
 import '../widgets/lance_background.dart';
 import '../widgets/lance_card.dart';
 import '../widgets/lance_icon.dart';
 import '../widgets/lance_switch.dart';
 import '../widgets/lance_top_bar.dart';
+import '../widgets/rota.dart';
+import 'credits_screen.dart';
 
 /// Configuracoes: som e vibracao.
 class SettingsScreen extends StatelessWidget {
@@ -48,6 +51,15 @@ class SettingsScreen extends StatelessWidget {
                         if (v) FeedbackService.instancia.vibrarForte();
                       },
                     ),
+                    const SizedBox(height: 6),
+                    GlowButton(
+                      texto: 'Créditos das fotos',
+                      icone: LanceIconType.lista,
+                      estilo: EstiloBotao.secundario,
+                      altura: 48,
+                      tamanhoTexto: 15,
+                      onTap: () => Navigator.of(context).push(rotaAnimada(const CreditsScreen())),
+                    ),
                     const SizedBox(height: 18),
                     LanceCard(
                       child: Column(
@@ -59,7 +71,7 @@ class SettingsScreen extends StatelessWidget {
                             'LANCE! versão 1.0 — funciona 100% offline, sem login e sem anúncios. '
                             'A partida em andamento é salva automaticamente.\n\n'
                             'Fontes Bungee e Fredoka sob a SIL Open Font License. '
-                            'Ícones e sons criados especialmente para o app.',
+                            'Ícones e sons criados especialmente para o app. Fotos da Wikimedia Commons (ver créditos).',
                             style: AppText.texto(14, cor: AppColors.lilas.withValues(alpha: 0.8)),
                           ),
                         ],

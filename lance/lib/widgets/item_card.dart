@@ -2,6 +2,7 @@ import 'package:material_ui/material_ui.dart';
 
 import '../theme/app_colors.dart';
 import '../theme/app_text.dart';
+import 'foto_item.dart';
 import 'lance_icon.dart';
 
 /// Card central com o item em leilao. Entra com deslize lateral + bounce
@@ -11,6 +12,7 @@ class ItemCard extends StatelessWidget {
   final int indice;
   final LanceIconType icone;
   final String tema;
+  final String temaId;
 
   const ItemCard({
     super.key,
@@ -18,6 +20,7 @@ class ItemCard extends StatelessWidget {
     required this.indice,
     required this.icone,
     required this.tema,
+    required this.temaId,
   });
 
   @override
@@ -60,7 +63,7 @@ class ItemCard extends StatelessWidget {
       },
       layoutBuilder: (atual, anteriores) =>
           Stack(alignment: Alignment.center, children: [...anteriores, ?atual]),
-      child: _Conteudo(key: ValueKey(indice), item: item, icone: icone, tema: tema),
+      child: _Conteudo(key: ValueKey(indice), item: item, icone: icone, tema: tema, temaId: temaId),
     );
   }
 }
@@ -69,7 +72,14 @@ class _Conteudo extends StatelessWidget {
   final String item;
   final LanceIconType icone;
   final String tema;
-  const _Conteudo({super.key, required this.item, required this.icone, required this.tema});
+  final String temaId;
+  const _Conteudo({
+    super.key,
+    required this.item,
+    required this.icone,
+    required this.tema,
+    required this.temaId,
+  });
 
   /// Escolhe o tamanho da fonte pelo comprimento do nome.
   double _fonte(double largura) {
@@ -85,11 +95,10 @@ class _Conteudo extends StatelessWidget {
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (context, c) {
-        final alturaIcone = (c.maxHeight * 0.32).clamp(36.0, 88.0);
         return Container(
           width: double.infinity,
           height: c.maxHeight,
-          padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 12),
+          padding: const EdgeInsets.fromLTRB(10, 10, 10, 8),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(30),
             gradient: const LinearGradient(
@@ -106,17 +115,21 @@ class _Conteudo extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              LanceIcon(icone, tamanho: alturaIcone),
-              SizedBox(height: c.maxHeight > 180 ? 10 : 4),
-              Flexible(
+              // Foto do item (ou icone do tema, se nao houver foto livre).
+              Expanded(
+                child: FotoItem(temaId: temaId, item: item, icone: icone),
+              ),
+              const SizedBox(height: 8),
+              SizedBox(
+                height: (c.maxHeight * 0.16).clamp(28.0, 52.0),
                 child: FittedBox(
                   fit: BoxFit.scaleDown,
                   child: ConstrainedBox(
-                    constraints: BoxConstraints(maxWidth: c.maxWidth - 36),
+                    constraints: BoxConstraints(maxWidth: c.maxWidth - 24),
                     child: Text(
                       item.toUpperCase(),
                       textAlign: TextAlign.center,
-                      maxLines: 3,
+                      maxLines: 2,
                       style: AppText.titulo(_fonte(c.maxWidth)).copyWith(shadows: AppText.brilho),
                     ),
                   ),

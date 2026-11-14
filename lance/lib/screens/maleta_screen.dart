@@ -7,6 +7,7 @@ import '../models/theme_category.dart';
 import '../services/feedback_service.dart';
 import '../theme/app_colors.dart';
 import '../theme/app_text.dart';
+import '../widgets/foto_item.dart';
 import '../widgets/glow_button.dart';
 import '../widgets/lance_background.dart';
 import '../widgets/lance_icon.dart';
@@ -79,6 +80,7 @@ class _MaletaScreenState extends State<MaletaScreen> {
                                 item: _itens[i],
                                 aberta: _abertas.contains(i),
                                 icone: widget.tema.icone,
+                                temaId: widget.tema.id,
                                 onTap: () => _abrir(i),
                               ),
                             ),
@@ -124,9 +126,11 @@ class _Maleta extends StatelessWidget {
   final String item;
   final bool aberta;
   final LanceIconType icone;
+  final String temaId;
   final VoidCallback onTap;
 
   const _Maleta({
+    required this.temaId,
     required this.numero,
     required this.item,
     required this.aberta,
@@ -188,7 +192,7 @@ class _Maleta extends StatelessWidget {
   );
 
   Widget _verso() => Container(
-    padding: const EdgeInsets.all(10),
+    padding: const EdgeInsets.all(6),
     decoration: BoxDecoration(
       color: AppColors.superficie,
       borderRadius: BorderRadius.circular(22),
@@ -196,27 +200,37 @@ class _Maleta extends StatelessWidget {
       boxShadow: [BoxShadow(color: AppColors.neon.withValues(alpha: 0.35), blurRadius: 16)],
     ),
     child: Column(
-      mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Text(
-          'MALETA $numero',
-          style: AppText.texto(12, cor: AppColors.lilas, peso: FontWeight.w700),
+        // Foto do item; o numero da maleta fica num selo no canto.
+        Expanded(
+          child: Stack(
+            children: [
+              Positioned.fill(
+                child: FotoItem(temaId: temaId, item: item, icone: icone, raio: 16),
+              ),
+              Positioned(
+                left: 6,
+                top: 6,
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                  decoration: BoxDecoration(color: AppColors.neon, borderRadius: BorderRadius.circular(10)),
+                  child: Text('$numero', style: AppText.numero(13, cor: AppColors.textoSobreAmarelo)),
+                ),
+              ),
+            ],
+          ),
         ),
-        const SizedBox(height: 6),
-        LanceIcon(icone, tamanho: 34),
-        const SizedBox(height: 6),
-        Flexible(
+        const SizedBox(height: 4),
+        SizedBox(
+          height: 24,
           child: FittedBox(
             fit: BoxFit.scaleDown,
-            child: ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 150),
-              child: Text(
-                item,
-                key: ValueKey('item_maleta_$numero'),
-                textAlign: TextAlign.center,
-                maxLines: 3,
-                style: AppText.titulo(18),
-              ),
+            child: Text(
+              item,
+              key: ValueKey('item_maleta_$numero'),
+              textAlign: TextAlign.center,
+              maxLines: 1,
+              style: AppText.titulo(16),
             ),
           ),
         ),

@@ -23,6 +23,15 @@ flutter:
   uses-material-design: false
   assets:
     - assets/sounds/
+    - assets/fotos/
+    - assets/fotos/futebol/
+    - assets/fotos/comidas/
+    - assets/fotos/bebidas/
+    - assets/fotos/aplicativos/
+    - assets/fotos/carros/
+    - assets/fotos/marcas/
+    - assets/fotos/filmes/
+    - assets/fotos/animais/
   fonts:
     - family: Bungee
       fonts:
