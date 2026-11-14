@@ -2,7 +2,9 @@ import 'dart:math';
 
 import 'package:flutter/painting.dart' show Color;
 import 'package:flutter_test/flutter_test.dart';
+import 'package:lance/data/futebol_posicoes.dart';
 import 'package:lance/data/themes_data.dart';
+import 'package:lance/models/posicao.dart';
 import 'package:lance/models/game_config.dart';
 import 'package:lance/models/player.dart';
 import 'package:lance/state/game_controller.dart';
@@ -42,6 +44,22 @@ void main() {
     final futebol = temaPorId('futebol')!.itens;
     for (final time in ['Flamengo', 'Corinthians', 'Palmeiras', 'Real Madrid', 'Barcelona', 'Liverpool']) {
       expect(futebol, isNot(contains(time)));
+    }
+  });
+
+  test('leilao de futebol garante 2 goleiros por jogador', () {
+    for (var seed = 0; seed < 30; seed++) {
+      final c = GameConfig(
+        temaId: 'futebol',
+        temaNome: 'Futebol',
+        itensPersonalizados: const [],
+        jogadores: [for (var i = 0; i < 3; i++) PlayerSetup(nome: 'J$i', corIndice: i)],
+        dinheiroInicial: 30,
+        quantidadeItens: 16,
+      );
+      final g = GameController()..persistir = false;
+      g.iniciar(c, temaPorId('futebol')!, random: Random(seed));
+      expect(g.itens.where((i) => funcaoDe(i) == Funcao.goleiro).length, greaterThanOrEqualTo(6));
     }
   });
 

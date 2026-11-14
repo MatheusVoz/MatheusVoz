@@ -3,7 +3,9 @@ import 'dart:math';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:lance/data/themes_data.dart';
 import 'package:lance/main.dart';
+import 'package:lance/data/futebol_posicoes.dart';
 import 'package:lance/models/game_mode.dart';
+import 'package:lance/models/posicao.dart';
 import 'package:lance/services/feedback_service.dart';
 import 'package:lance/state/game_controller.dart';
 import 'package:lance/state/settings_controller.dart';
@@ -56,6 +58,25 @@ void main() {
       expect(r.impostorGanhou(2), isFalse);
       expect(r.impostorGanhou(0), isTrue);
     });
+  });
+
+  test('futebol: baralho sempre tem pelo menos 2 goleiros por jogador', () {
+    final tema = temaPorId('futebol')!;
+    for (var seed = 0; seed < 50; seed++) {
+      for (final jogadores in [2, 3, 4, 6]) {
+        final b = montarBaralho(tema, jogadores * 4 + 4, goleirosMin: jogadores * 2, random: Random(seed));
+        expect(b.toSet().length, b.length);
+        expect(b.where((i) => funcaoDe(i) == Funcao.goleiro).length, greaterThanOrEqualTo(jogadores * 2));
+      }
+    }
+  });
+
+  test('futebol tem goleiros suficientes e todos os jogadores tem funcao', () {
+    final tema = temaPorId('futebol')!;
+    expect(tema.itens.where((i) => funcaoDe(i) == Funcao.goleiro).length, greaterThanOrEqualTo(20));
+    for (final i in tema.itens) {
+      expect(funcaoDoJogador.containsKey(i), isTrue, reason: i);
+    }
   });
 
   test('maletas: 5 itens diferentes do tema', () {
@@ -115,20 +136,24 @@ void main() {
         await abrirModo(t, 'Maleta', tela, tema: tema);
         await tocar(t, find.text('Começar'));
         await esperar(t, 600);
-        // 2 jogadores x 5 = 10 maletas abertas.
+        // Primeiro alguem passa a vez; depois 2 jogadores x 5 = 10 escalacoes.
+        await tocar(t, find.bySemanticsLabel(RegExp(r'^Abrir maleta')).first);
+        await esperar(t, 1400);
+        await tocar(t, find.text('Não quero, passar a vez'));
+        await esperar(t, 1500);
         for (var rodada = 0; rodada < 10; rodada++) {
           await tocar(t, find.bySemanticsLabel(RegExp(r'^Abrir maleta')).first);
-          await esperar(t, 800);
+          await esperar(t, 1400);
           if (tema == 'FUTEBOL') {
             if (tela == 'media' && gerarCapturas && rodada == 3) {
               await capturar(t, '13b_maleta_escalar_$tela');
             }
             await tocar(t, find.bySemanticsLabel(RegExp('^Escalar em ')).first);
           } else {
-            await tocar(t, find.textContaining('Colocar no time de'));
+            await tocar(t, find.text('Colocar no time'));
           }
           await esperar(t, 700);
-          if (tela == 'media' && gerarCapturas && tema == 'FUTEBOL' && rodada == 5) {
+          if ((tela == 'media' || tela == 'tablet') && gerarCapturas && tema == 'FUTEBOL' && rodada == 5) {
             await capturar(t, '13_maleta_$tela');
           }
         }

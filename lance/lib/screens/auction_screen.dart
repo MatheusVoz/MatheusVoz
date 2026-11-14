@@ -157,16 +157,17 @@ class _AuctionScreenState extends State<AuctionScreen> with TickerProviderStateM
     // Tema Futebol: o comprador escolhe a posicao do jogador no campinho.
     if (r.ok && g.usaCampo) {
       final comprador = g.jogador(p.id);
-      final pos = await escolherPosicao(
+      final escolha = await escolherPosicao(
         context,
         dono: comprador.nome,
         cor: comprador.cor,
         item: comprador.compras.last.item,
         escalacao: escalacaoDe(comprador.compras),
         livres: g.posicoesLivres(comprador),
+        textoAlternativa: 'Deixar no banco (reserva)',
       );
       if (!mounted) return;
-      g.escalarUltimo(comprador.id, pos);
+      g.escalarUltimo(comprador.id, escolha.posicao);
     }
     setState(() => _vendendo = false);
     if (g.leilaoEncerrado) _mostrarFim();

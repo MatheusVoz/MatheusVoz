@@ -25,7 +25,12 @@ Future<void> carregarFontes() async {
 }
 
 /// Tamanhos de tela testados (dp): celular pequeno, medio e grande.
-const telas = {'pequena': Size(360, 640), 'media': Size(393, 851), 'grande': Size(430, 932)};
+const telas = {
+  'pequena': Size(360, 640),
+  'media': Size(393, 851),
+  'grande': Size(430, 932),
+  'tablet': Size(800, 1280),
+};
 
 bool gerarCapturas = Platform.environment['CAPTURAS'] == '1';
 

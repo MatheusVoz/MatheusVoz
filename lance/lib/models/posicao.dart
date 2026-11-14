@@ -16,3 +16,17 @@ enum Posicao {
   /// Tema que usa o campinho.
   static const temaFutebol = 'futebol';
 }
+
+/// Funcao do jogador de futebol (de onde ele joga de verdade).
+enum Funcao {
+  goleiro('Goleiro', [Posicao.goleiro]),
+  defensor('Defensor', [Posicao.volante]),
+  meia('Meia', [Posicao.meiaEsquerda, Posicao.meiaDireita]),
+  atacante('Atacante', [Posicao.atacante]);
+
+  final String nome;
+
+  /// Posicoes do campinho que combinam com a funcao.
+  final List<Posicao> posicoes;
+  const Funcao(this.nome, this.posicoes);
+}

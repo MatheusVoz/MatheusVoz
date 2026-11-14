@@ -6,6 +6,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../data/themes_data.dart';
 import '../models/game_config.dart';
+import '../models/game_mode.dart';
 import '../models/player.dart';
 import '../models/posicao.dart';
 import '../models/theme_category.dart';
@@ -134,10 +135,10 @@ class GameController extends ChangeNotifier {
   /// Comeca uma nova partida com a configuracao e o tema escolhidos.
   void iniciar(GameConfig config, ThemeCategory tema, {Random? random}) {
     final rnd = random ?? Random();
-    final pool = tema.itens.toSet().toList()..shuffle(rnd);
-    final qtd = min(config.quantidadeItens, pool.length);
+    final qtd = min(config.quantidadeItens, tema.itens.toSet().length);
     _config = config;
-    _itens = pool.take(qtd).toList();
+    // Futebol: pelo menos 2 goleiros por jogador entre os itens do leilao.
+    _itens = montarBaralho(tema, qtd, goleirosMin: config.jogadores.length * 2, random: rnd);
     _indice = 0;
     _historico.clear();
     _ranking = [];
