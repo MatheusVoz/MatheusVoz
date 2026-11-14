@@ -13,7 +13,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'helpers.dart';
 
 /// Abre o app e navega ate o tema Futebol do modo escolhido.
-Future<void> abrirModo(WidgetTester t, String modo, String tela) async {
+Future<void> abrirModo(WidgetTester t, String modo, String tela, {String tema = 'FUTEBOL'}) async {
   SharedPreferences.setMockInitialValues({});
   FeedbackService.habilitado = false;
   t.view.physicalSize = telas[tela]! * 3;
@@ -27,7 +27,7 @@ Future<void> abrirModo(WidgetTester t, String modo, String tela) async {
   await esperar(t, 900);
   await tocar(t, find.bySemanticsLabel('Modo $modo'));
   await esperar(t, 1200);
-  await tocar(t, find.text('FUTEBOL'));
+  await tocar(t, find.text(tema));
   await esperar(t, 900);
 }
 
@@ -110,18 +110,38 @@ void main() {
       });
     }
 
-    testWidgets('fluxo Maleta: tela $tela', (t) async {
-      await abrirModo(t, 'Maleta', tela);
-      for (var i = 1; i <= 5; i++) {
-        await tocar(t, find.bySemanticsLabel('Abrir maleta $i'));
-        await esperar(t, 700);
-        expect(find.byKey(ValueKey('item_maleta_$i')), findsOneWidget);
-      }
-      if (tela == 'media' && gerarCapturas) await capturar(t, '13_maleta_$tela');
-      await tocar(t, find.text('Novas maletas'));
-      await esperar(t, 700);
-      expect(find.bySemanticsLabel('Abrir maleta 1'), findsOneWidget);
-      await fechar(t);
-    });
+    for (final tema in ['FUTEBOL', 'ANIMAIS']) {
+      testWidgets('fluxo Maleta ($tema): tela $tela', (t) async {
+        await abrirModo(t, 'Maleta', tela, tema: tema);
+        await tocar(t, find.text('Começar'));
+        await esperar(t, 600);
+        // 2 jogadores x 5 = 10 maletas abertas.
+        for (var rodada = 0; rodada < 10; rodada++) {
+          await tocar(t, find.bySemanticsLabel(RegExp(r'^Abrir maleta')).first);
+          await esperar(t, 800);
+          if (tema == 'FUTEBOL') {
+            if (tela == 'media' && gerarCapturas && rodada == 3) {
+              await capturar(t, '13b_maleta_escalar_$tela');
+            }
+            await tocar(t, find.bySemanticsLabel(RegExp('^Escalar em ')).first);
+          } else {
+            await tocar(t, find.textContaining('Colocar no time de'));
+          }
+          await esperar(t, 700);
+          if (tela == 'media' && gerarCapturas && tema == 'FUTEBOL' && rodada == 5) {
+            await capturar(t, '13_maleta_$tela');
+          }
+        }
+        expect(find.text('TIMES COMPLETOS'), findsOneWidget);
+        await tocar(t, find.byKey(const ValueKey('vencedor_1')));
+        await esperar(t, 900);
+        expect(find.text('CAMPEÃO'), findsOneWidget);
+        if (tela == 'media' && gerarCapturas && tema == 'FUTEBOL') await capturar(t, '14_maleta_fim_$tela');
+        await tocar(t, find.text('Jogar de novo'));
+        await esperar(t, 600);
+        expect(find.bySemanticsLabel('Abrir maleta 1'), findsOneWidget);
+        await fechar(t);
+      });
+    }
   }
 }

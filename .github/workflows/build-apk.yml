@@ -37,17 +37,23 @@ jobs:
       - name: Testes
         run: flutter test
 
-      - name: Compilar APK de release
-        run: flutter build apk --release
+      - name: Compilar APK de release (um por tipo de processador, bem menores)
+        run: flutter build apk --release --split-per-abi
 
-      - name: Renomear APK
-        run: cp build/app/outputs/flutter-apk/app-release.apk build/LANCE.apk
+      - name: Renomear APKs
+        run: |
+          # LANCE.apk = celulares atuais (ARM 64 bits, quase todos os Android de hoje)
+          cp build/app/outputs/flutter-apk/app-arm64-v8a-release.apk build/LANCE.apk
+          # Para celulares antigos (32 bits)
+          cp build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk build/LANCE-celular-antigo.apk
 
       - name: Guardar APK como artefato
         uses: actions/upload-artifact@v4
         with:
           name: LANCE-apk
-          path: lance/build/LANCE.apk
+          path: |
+            lance/build/LANCE.apk
+            lance/build/LANCE-celular-antigo.apk
 
       - name: Publicar na aba Releases
         uses: softprops/action-gh-release@v2
@@ -58,5 +64,8 @@ jobs:
             APK do LANCE! gerado automaticamente.
             Baixe o LANCE.apk abaixo, abra no celular e toque em Instalar
             (permita "instalar apps desconhecidos" se o Android pedir).
-          files: lance/build/LANCE.apk
+            Se o celular for muito antigo e o LANCE.apk nao instalar, use o LANCE-celular-antigo.apk.
+          files: |
+            lance/build/LANCE.apk
+            lance/build/LANCE-celular-antigo.apk
           target_commitish: ${{ github.sha }}

@@ -14,6 +14,7 @@ Future<void> jogarPartida(
   required int dinheiro,
   required String tela,
   bool capturas = false,
+  String tema = 'BEBIDAS',
 }) async {
   SharedPreferences.setMockInitialValues({});
   FeedbackService.habilitado = false;
@@ -35,7 +36,7 @@ Future<void> jogarPartida(
   await esperar(t, 1400);
   if (capturas) await capturar(t, '02_temas_$tela');
 
-  await tocar(t, find.text('BEBIDAS'));
+  await tocar(t, find.text(tema));
   await esperar(t, 900);
   await tocar(t, find.byKey(ValueKey('jogadores-$jogadores')));
   await tocar(t, find.byKey(ValueKey('dinheiro-$dinheiro')));
@@ -80,6 +81,13 @@ Future<void> jogarPartida(
     await esperar(t, 500);
     if (capturas && vendas == 1) await capturar(t, '06_vendido_$tela');
     await esperar(t, 1300);
+    // Futebol: escolhe a posicao no campinho (ou banco, se o campo estiver cheio).
+    if (find.text('Toque numa bolinha amarela').evaluate().isNotEmpty) {
+      if (capturas && vendas == 0) await capturar(t, '06b_escalar_$tela');
+      final vaga = find.bySemanticsLabel(RegExp('^Escalar em '));
+      await tocar(t, vaga.evaluate().isNotEmpty ? vaga.first : find.text('Deixar no banco (reserva)'));
+      await esperar(t, 700);
+    }
     vendas++;
     expect(game.jogador(apto.id).saldo, lessThan(saldoAntes));
     // Testa o desfazer uma vez.
@@ -135,6 +143,9 @@ void main() {
       for (final d in [20, 30, 50]) {
         testWidgets('fluxo completo: $j jogadores, R\$$d, tela $tela', (t) async {
           await jogarPartida(t, jogadores: j, dinheiro: d, tela: tela);
+        });
+        testWidgets('fluxo futebol com campinho: $j jogadores, R\$$d, tela $tela', (t) async {
+          await jogarPartida(t, jogadores: j, dinheiro: d, tela: tela, tema: 'FUTEBOL');
         });
       }
     }

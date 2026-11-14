@@ -7,6 +7,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../data/themes_data.dart';
 import '../models/game_config.dart';
 import '../models/player.dart';
+import '../models/posicao.dart';
 import '../models/theme_category.dart';
 import '../theme/app_colors.dart';
 
@@ -176,6 +177,31 @@ class GameController extends ChangeNotifier {
     _indice++;
     _mudou();
     return const ResultadoVenda.sucesso();
+  }
+
+  // -------------------------------------------------------------
+  // Campinho (tema Futebol)
+  // -------------------------------------------------------------
+
+  /// A partida usa o campinho de futebol?
+  bool get usaCampo => _config?.temaId == Posicao.temaFutebol;
+
+  /// Posicoes do campo ainda vazias para o jogador.
+  List<Posicao> posicoesLivres(Player p) {
+    final ocupadas = p.compras.map((c) => c.posicao).whereType<int>().toSet();
+    return [
+      for (final pos in Posicao.values)
+        if (!ocupadas.contains(pos.index)) pos,
+    ];
+  }
+
+  /// Escala o ultimo item comprado pelo jogador numa posicao (null = reserva).
+  void escalarUltimo(int jogadorId, Posicao? posicao) {
+    final p = jogador(jogadorId);
+    if (p.compras.isEmpty) return;
+    if (posicao != null && !posicoesLivres(p).contains(posicao)) return;
+    p.compras.last.posicao = posicao?.index;
+    _mudou();
   }
 
   /// Ninguem quis o item: passa para o proximo.

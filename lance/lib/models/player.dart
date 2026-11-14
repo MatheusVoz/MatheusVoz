@@ -8,12 +8,19 @@ class Purchase {
   /// Posicao do item na fila do leilao (para desfazer corretamente).
   final int indiceItem;
 
-  const Purchase({required this.item, required this.preco, required this.indiceItem});
+  /// Posicao no campinho (indice de Posicao); null = reserva ou tema sem campo.
+  int? posicao;
 
-  Map<String, dynamic> toJson() => {'item': item, 'preco': preco, 'indice': indiceItem};
+  Purchase({required this.item, required this.preco, required this.indiceItem, this.posicao});
 
-  factory Purchase.fromJson(Map<String, dynamic> j) =>
-      Purchase(item: j['item'] as String, preco: j['preco'] as int, indiceItem: j['indice'] as int);
+  Map<String, dynamic> toJson() => {'item': item, 'preco': preco, 'indice': indiceItem, 'pos': posicao};
+
+  factory Purchase.fromJson(Map<String, dynamic> j) => Purchase(
+    item: j['item'] as String,
+    preco: j['preco'] as int,
+    indiceItem: j['indice'] as int,
+    posicao: j['pos'] as int?,
+  );
 }
 
 /// Configuracao basica de um jogador (nome e cor), definida antes do leilao.

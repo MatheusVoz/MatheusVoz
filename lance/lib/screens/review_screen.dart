@@ -5,6 +5,8 @@ import '../models/player.dart';
 import '../state/game_controller.dart';
 import '../theme/app_colors.dart';
 import '../theme/app_text.dart';
+import '../widgets/campo_futebol.dart';
+import '../widgets/escalar_sheet.dart';
 import '../widgets/glow_button.dart';
 import '../widgets/lance_background.dart';
 import '../widgets/lance_icon.dart';
@@ -114,7 +116,7 @@ class _ReviewScreenState extends State<ReviewScreen> {
                         if (_pagina.position.haveDimensions) d = ((_pagina.page ?? 0) - i).abs();
                         return Transform.scale(scale: (1 - d * 0.08).clamp(0.85, 1.0), child: c);
                       },
-                      child: _ListaJogador(jogador: js[i]),
+                      child: _ListaJogador(jogador: js[i], campo: g.usaCampo),
                     ),
                   ),
                 ),
@@ -141,7 +143,8 @@ class _ReviewScreenState extends State<ReviewScreen> {
 
 class _ListaJogador extends StatelessWidget {
   final Player jogador;
-  const _ListaJogador({required this.jogador});
+  final bool campo;
+  const _ListaJogador({required this.jogador, this.campo = false});
 
   @override
   Widget build(BuildContext context) {
@@ -182,6 +185,12 @@ class _ListaJogador extends StatelessWidget {
               child: ListView(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 children: [
+                  // Futebol: campinho com a escalacao.
+                  if (campo)
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(24, 0, 24, 18),
+                      child: CampoFutebol(escalacao: escalacaoDe(p.compras), cor: p.cor),
+                    ),
                   for (var i = 0; i < p.compras.length; i++)
                     _linhaItem(i + 1, p.compras[i].item, 'R\$${p.compras[i].preco}', p.cor),
                   if (p.compras.isEmpty)

@@ -9,6 +9,9 @@ import '../services/feedback_service.dart';
 import '../state/game_controller.dart';
 import '../theme/app_colors.dart';
 import '../theme/app_text.dart';
+import '../models/posicao.dart';
+import '../widgets/campo_futebol.dart';
+import '../widgets/escalar_sheet.dart';
 import '../widgets/glow_button.dart';
 import '../widgets/item_card.dart';
 import '../widgets/keypad_sheet.dart';
@@ -151,6 +154,20 @@ class _AuctionScreenState extends State<AuctionScreen> with TickerProviderStateM
     });
     await Future<void>.delayed(const Duration(milliseconds: 700));
     if (!mounted) return;
+    // Tema Futebol: o comprador escolhe a posicao do jogador no campinho.
+    if (r.ok && g.usaCampo) {
+      final comprador = g.jogador(p.id);
+      final pos = await escolherPosicao(
+        context,
+        dono: comprador.nome,
+        cor: comprador.cor,
+        item: comprador.compras.last.item,
+        escalacao: escalacaoDe(comprador.compras),
+        livres: g.posicoesLivres(comprador),
+      );
+      if (!mounted) return;
+      g.escalarUltimo(comprador.id, pos);
+    }
     setState(() => _vendendo = false);
     if (g.leilaoEncerrado) _mostrarFim();
   }
@@ -761,6 +778,12 @@ class _ListasParciais extends StatelessWidget {
                       ],
                     ),
                     const SizedBox(height: 6),
+                    // Futebol: mostra o campinho com a escalacao do jogador.
+                    if (game.usaCampo)
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 6),
+                        child: CampoFutebol(escalacao: escalacaoDe(p.compras), cor: p.cor),
+                      ),
                     if (p.compras.isEmpty)
                       Text(
                         'Nenhum item ainda',
@@ -772,7 +795,14 @@ class _ListasParciais extends StatelessWidget {
                           padding: const EdgeInsets.only(top: 3),
                           child: Row(
                             children: [
-                              Expanded(child: Text(c.item, style: AppText.texto(15))),
+                              Expanded(
+                                child: Text(
+                                  c.posicao != null && game.usaCampo
+                                      ? '${c.item} (${Posicao.values[c.posicao!].sigla})'
+                                      : (game.usaCampo ? '${c.item} (reserva)' : c.item),
+                                  style: AppText.texto(15),
+                                ),
+                              ),
                               Text('R\$${c.preco}', style: AppText.texto(15, cor: AppColors.branco)),
                             ],
                           ),

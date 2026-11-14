@@ -60,7 +60,9 @@ Para um tema novo, copie um bloco `ThemeCategory`, troque `id`, `nome`, `descric
 
 - **Impostor** (3 a 10 pessoas): o celular passa de mão em mão; todos veem o mesmo item do tema, menos um,
   que vê IMPOSTOR. O grupo conversa e vota; o app mostra se o impostor ganhou ou perdeu.
-- **Maleta**: 5 maletas numeradas, cada uma com um item sorteado do tema. Toque para abrir.
+- **Maleta** (2 a 4 jogadores): cada um monta um time de 5. Na sua vez, abre uma das maletas e escala quem saiu
+  numa posição do seu campinho (Futebol) ou no seu time (outros temas). No fim, o grupo escolhe o campeão.
+- **Campinho**: no tema Futebol, o leilão também tem campinho; quem arremata escolhe a posição (ou o banco).
 
 ## Testes
 
