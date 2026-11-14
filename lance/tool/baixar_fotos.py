@@ -144,6 +144,15 @@ TITULOS = {
     'Borboleta-azul': 'Morpho', 'Lhama': 'Llama',
 }
 
+# Segunda tentativa quando a pagina principal nao tem foto livre.
+ALTERNATIVOS = {
+    'Xavi': 'Xavi Hernández', 'Luis Suárez': 'Luis Suárez (footballer, born 1987)', 'Pastel': 'Pastel (Brazilian food)',
+    'Macarrão à bolonhesa': 'Bolognese sauce', 'Pudim': 'Crème caramel', 'Suco de maracujá': 'Passion fruit',
+    'Aperol Spritz': 'Aperol', 'Borboleta-azul': 'Morpho menelaus', 'Escondidinho': 'Cassava',
+    'Heineken': 'Heineken Pilsener', 'PlayStation': 'PlayStation (console)', 'Netflix': 'Netflix, Inc.',
+    'Lacta': 'Laka (chocolate)',
+}
+
 LICENCAS_LIVRES = re.compile(r'(CC0|CC BY|CC-BY|Public domain|PD|GFDL|Attribution|No restrictions|FAL)', re.I)
 
 
@@ -226,7 +235,7 @@ def metadados(arquivos):
     return res
 
 
-def processar(conteudo):
+def processar(conteudo, logo=False):
     im = Image.open(io.BytesIO(conteudo))
     im = ImageOps.exif_transpose(im)
     if im.mode in ('RGBA', 'LA', 'P'):
@@ -235,7 +244,14 @@ def processar(conteudo):
         fundo.alpha_composite(im)
         im = fundo
     im = im.convert('RGB')
-    # Quadrado: logos (fundo transparente/branco) sao encaixados; fotos sao cortadas.
+    if logo:
+        # Logotipos (desenhos vetoriais/PNG) sao encaixados inteiros, com margem branca.
+        margem = int(TAM * 0.12)
+        im.thumbnail((TAM - 2 * margem, TAM - 2 * margem), Image.LANCZOS)
+        quadro = Image.new('RGB', (TAM, TAM), (255, 255, 255))
+        quadro.paste(im, ((TAM - im.width) // 2, (TAM - im.height) // 2))
+        return quadro
+    # Fotos sao cortadas em quadrado, priorizando a parte de cima (rostos).
     return ImageOps.fit(im, (TAM, TAM), Image.LANCZOS, centering=(0.5, 0.35))
 
 
@@ -250,6 +266,12 @@ def main():
         for k in range(0, len(titulos), 20):
             paginas.update(imagem_da_pagina(titulos[k:k + 20]))
             time.sleep(0.5)
+        # Itens sem foto: tenta o titulo alternativo.
+        faltando = [(i, t) for i, t in zip(itens, titulos) if not paginas.get(t) and i in ALTERNATIVOS]
+        if faltando:
+            alt = imagem_da_pagina([ALTERNATIVOS[i] for i, _ in faltando])
+            for i, t in faltando:
+                paginas[t] = alt.get(ALTERNATIVOS[i])
         arquivos = sorted({a for a in paginas.values() if a})
         metas = {}
         for k in range(0, len(arquivos), 20):
@@ -263,9 +285,13 @@ def main():
                 continue
             destino = os.path.join(tema, slug(item) + '.jpg')
             caminho = os.path.join(SAIDA, destino)
+            logo = (m['mime'] or '') in ('image/svg+xml', 'image/png', 'image/gif')
+            # REFAZER_LOGOS=1 baixa de novo os logotipos (para encaixar sem cortar).
+            if logo and os.environ.get('REFAZER_LOGOS') == '1' and os.path.exists(caminho):
+                os.remove(caminho)
             if not os.path.exists(caminho):
                 try:
-                    processar(get_bytes(m['thumb'])).save(caminho, quality=82, optimize=True)
+                    processar(get_bytes(m['thumb']), logo).save(caminho, quality=82, optimize=True)
                 except Exception as e:  # noqa: BLE001
                     print('  falha ao baixar:', item, e)
                     continue
