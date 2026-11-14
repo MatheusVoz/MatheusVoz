@@ -27,10 +27,18 @@ lib/
   screens/                  menu, temas, tema personalizado, configuração, leilão,
                             revisão, juiz, pódio, como jogar, configurações
 assets/fonts/               Bungee e Fredoka (SIL Open Font License), embutidas
+assets/fotos/               fotos dos itens (Wikimedia Commons, licenças livres; créditos em creditos.json)
 assets/sounds/              martelo, moeda, fanfarra, toque (sintetizados por tool/gerar_sons.py)
-tool/                       scripts que geram os sons e o ícone do launcher
+tool/                       scripts que geram os sons, o ícone do launcher e baixam as fotos
 test/                       regras (todas as combinações) e fluxo completo pela interface
 ```
+
+## Fotos dos itens
+
+No jogo (leilão, impostor e maletas) cada item aparece com foto e nome embaixo. As fotos vêm da
+Wikimedia Commons, só com licenças livres (Creative Commons ou domínio público), e ficam embutidas no app.
+Itens sem foto livre (a maioria dos filmes, cujos cartazes são protegidos, e alguns logotipos) usam o ícone do tema.
+Para atualizar: `python3 tool/baixar_fotos.py` (gera `assets/fotos/` e `lib/data/fotos_data.dart`).
 
 ## Adicionar itens ou temas
 

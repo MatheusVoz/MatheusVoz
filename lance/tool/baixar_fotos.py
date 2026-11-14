@@ -153,6 +153,9 @@ ALTERNATIVOS = {
     'Lacta': 'Laka (chocolate)',
 }
 
+# Imagens que nao representam bem o item (predios de sede, capturas de tela): usam o icone.
+EXCLUIR = {"aplicativos": ["Airbnb", "AliExpress", "Amazon", "Booking", "Google Meet", "Instagram", "Mercado Livre", "Netflix", "Prime Video", "Reddit", "Shopee", "Spotify", "Uber", "YouTube", "Zoom"], "marcas": ["Amazon", "Google", "Mercado Livre", "Microsoft", "Nestlé", "Netflix", "Nike", "Nintendo", "Petrobras", "Samsung", "Sony", "Spotify", "Starbucks", "Toyota", "Ferrari", "Puma", "Gucci"]}
+
 LICENCAS_LIVRES = re.compile(r'(CC0|CC BY|CC-BY|Public domain|PD|GFDL|Attribution|No restrictions|FAL)', re.I)
 
 
@@ -278,6 +281,8 @@ def main():
             metas.update(metadados(arquivos[k:k + 20]))
             time.sleep(0.5)
         for item, titulo in zip(itens, titulos):
+            if item in EXCLUIR.get(tema, []):
+                continue
             arq = paginas.get(titulo)
             m = metas.get(arq.replace(' ', '_')) if arq else None
             if not m or not m['thumb'] or not LICENCAS_LIVRES.search(m['licenca'] or ''):

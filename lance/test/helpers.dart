@@ -31,6 +31,13 @@ bool gerarCapturas = Platform.environment['CAPTURAS'] == '1';
 
 Future<void> capturar(WidgetTester t, String nome) async {
   if (!gerarCapturas) return;
+  // Espera as fotos terminarem de carregar antes de tirar a captura.
+  await t.runAsync(() async {
+    for (final e in find.byType(Image).evaluate()) {
+      await precacheImage((e.widget as Image).image, e);
+    }
+  });
+  await t.pump();
   await expectLater(find.byType(MaterialApp), matchesGoldenFile('goldens/$nome.png'));
 }
 

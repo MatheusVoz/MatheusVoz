@@ -54,11 +54,15 @@ class CreditsScreen extends StatelessWidget {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text('${c['item']}',
-                                  style: AppText.texto(14, cor: AppColors.branco, peso: FontWeight.w700)),
+                              Text(
+                                '${c['item']}',
+                                style: AppText.texto(14, cor: AppColors.branco, peso: FontWeight.w700),
+                              ),
                               Text('${c['autor']}  •  ${c['licenca']}', style: AppText.texto(12)),
-                              Text('${c['fonte']}',
-                                  style: AppText.texto(11, cor: AppColors.lilas.withValues(alpha: 0.7))),
+                              Text(
+                                '${c['fonte']}',
+                                style: AppText.texto(11, cor: AppColors.lilas.withValues(alpha: 0.7)),
+                              ),
                             ],
                           ),
                         );
