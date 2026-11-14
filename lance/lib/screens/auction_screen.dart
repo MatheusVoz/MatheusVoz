@@ -381,8 +381,6 @@ class _AuctionScreenState extends State<AuctionScreen> with TickerProviderStateM
                 ),
                 child: Row(
                   children: [
-                    _botaoAjuste('-5', () => _ajustar(-5), compacto),
-                    const SizedBox(width: 6),
                     _botaoAjuste('-1', () => _ajustar(-1), compacto),
                     Expanded(
                       child: Semantics(
@@ -420,8 +418,6 @@ class _AuctionScreenState extends State<AuctionScreen> with TickerProviderStateM
                       ),
                     ),
                     _botaoAjuste('+1', () => _ajustar(1), compacto),
-                    const SizedBox(width: 6),
-                    _botaoAjuste('+5', () => _ajustar(5), compacto),
                   ],
                 ),
               ),
@@ -561,7 +557,7 @@ class _AuctionScreenState extends State<AuctionScreen> with TickerProviderStateM
           return Opacity(
             opacity: opacidade.clamp(0.0, 1.0),
             child: Container(
-              color: Colors.black.withValues(alpha: 0.72),
+              color: AppColors.fundo.withValues(alpha: 0.9),
               alignment: Alignment.center,
               child: Transform.translate(
                 offset: Offset(tremor, 0),
@@ -640,7 +636,7 @@ class _AuctionScreenState extends State<AuctionScreen> with TickerProviderStateM
         final titulo = Curves.elasticOut.transform(((t - 0.15) / 0.6).clamp(0.0, 1.0));
         final botoes = Curves.easeOut.transform(((t - 0.6) / 0.4).clamp(0.0, 1.0));
         return Container(
-          color: Colors.black.withValues(alpha: 0.85 * fundo),
+          color: AppColors.fundo.withValues(alpha: 0.96 * fundo),
           child: SafeArea(
             child: Padding(
               padding: const EdgeInsets.all(24),

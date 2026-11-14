@@ -41,6 +41,8 @@ enum LanceIconType {
   lixeira,
   lista,
   teclado,
+  maleta,
+  mascara,
 }
 
 /// Widget que desenha um icone proprio.
@@ -232,6 +234,10 @@ class LanceIconPainter extends CustomPainter {
         _lista();
       case LanceIconType.teclado:
         _teclado();
+      case LanceIconType.maleta:
+        _maleta();
+      case LanceIconType.mascara:
+        _mascara();
     }
     canvas.restore();
   }
@@ -670,6 +676,48 @@ class LanceIconPainter extends CustomPainter {
       _c.drawPath(_circ(30, y, 4), Paint()..color = stroke);
     }
     _detalhe(linhas, 5);
+  }
+
+  void _maleta() {
+    // Alca.
+    _c.drawPath(
+      Path()
+        ..moveTo(38, 30)
+        ..lineTo(38, 20)
+        ..quadraticBezierTo(38, 14, 44, 14)
+        ..lineTo(56, 14)
+        ..quadraticBezierTo(62, 14, 62, 20)
+        ..lineTo(62, 30),
+      _stroke(7),
+    );
+    // Corpo.
+    _fs(_rr(8, 30, 92, 86, 10));
+    // Faixa e fecho.
+    _detalhe(
+      Path()
+        ..moveTo(8, 52)
+        ..lineTo(92, 52),
+      4.5,
+    );
+    _fs(_rr(42, 46, 58, 60, 3));
+  }
+
+  void _mascara() {
+    // Mascara de baile (impostor).
+    final p = Path()
+      ..moveTo(6, 36)
+      ..quadraticBezierTo(28, 26, 50, 36)
+      ..quadraticBezierTo(72, 26, 94, 36)
+      ..quadraticBezierTo(94, 70, 70, 72)
+      ..quadraticBezierTo(56, 72, 50, 60)
+      ..quadraticBezierTo(44, 72, 30, 72)
+      ..quadraticBezierTo(6, 70, 6, 36)
+      ..close();
+    _fs(p);
+    // Olhos.
+    final olhos = Paint()..color = stroke;
+    _c.drawOval(Rect.fromCenter(center: const Offset(30, 50), width: 20, height: 12), olhos);
+    _c.drawOval(Rect.fromCenter(center: const Offset(70, 50), width: 20, height: 12), olhos);
   }
 
   void _teclado() {

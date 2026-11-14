@@ -28,7 +28,7 @@ class LanceCard extends StatelessWidget {
         gradient: const LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [Color(0xFF4A1F9A), Color(0xFF34107A)],
+          colors: [Color(0xFFFFFFFF), Color(0xFFF8F4FF)],
         ),
         border: Border.all(color: borda, width: 1.5),
         boxShadow: brilho ? [BoxShadow(color: borda.withValues(alpha: 0.5), blurRadius: 20)] : null,

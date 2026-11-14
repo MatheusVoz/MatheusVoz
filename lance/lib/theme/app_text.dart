@@ -30,8 +30,5 @@ class AppText {
   );
 
   /// Sombra de brilho neon para textos.
-  static const brilho = [
-    Shadow(color: AppColors.neon, blurRadius: 18),
-    Shadow(color: AppColors.roxo, blurRadius: 36),
-  ];
+  static const brilho = [Shadow(color: Color(0x33FFC81F), blurRadius: 10)];
 }

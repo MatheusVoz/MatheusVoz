@@ -95,7 +95,7 @@ class _Conteudo extends StatelessWidget {
             gradient: const LinearGradient(
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
-              colors: [Color(0xFF6A2DD8), Color(0xFF3F149A), Color(0xFF55209E)],
+              colors: [Color(0xFFFFFFFF), Color(0xFFF6F0FF), Color(0xFFEDE3FF)],
             ),
             border: Border.all(color: AppColors.neon, width: 2.5),
             boxShadow: [

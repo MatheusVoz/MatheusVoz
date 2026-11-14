@@ -30,7 +30,7 @@ class GameConfig {
   });
 
   /// Opcoes oferecidas na tela de configuracao.
-  static const opcoesJogadores = [2, 4, 6];
+  static const opcoesJogadores = [2, 3, 4, 5, 6];
   static const opcoesDinheiro = [20, 30, 50];
 
   /// Nao ha limite de itens por jogador: cada um arremata quantos conseguir pagar.

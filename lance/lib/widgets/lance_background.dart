@@ -70,17 +70,17 @@ class _BrilhosPainter extends CustomPainter {
     brilho(
       Offset(size.width * (0.15 + 0.08 * math.sin(a)), size.height * 0.12),
       size.width * 0.7,
-      const Color(0x337B2FF7),
+      const Color(0x187B2FF7),
     );
     brilho(
       Offset(size.width * (0.9 + 0.06 * math.cos(a)), size.height * (0.55 + 0.05 * math.sin(a))),
       size.width * 0.6,
-      const Color(0x22FFD23F),
+      const Color(0x22FFC81F),
     );
     brilho(
       Offset(size.width * 0.3, size.height * (0.98 + 0.03 * math.cos(a))),
       size.width * 0.6,
-      const Color(0x449B5CFF),
+      const Color(0x149B5CFF),
     );
   }
 

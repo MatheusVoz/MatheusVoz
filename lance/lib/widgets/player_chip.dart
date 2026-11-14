@@ -45,7 +45,7 @@ class PlayerChip extends StatelessWidget {
             borderRadius: BorderRadius.circular(18),
             color: selecionado
                 ? Color.alphaBlend(cor.withValues(alpha: 0.28), AppColors.superficie)
-                : (ativo ? AppColors.superficieClara : const Color(0xFF331470)),
+                : (ativo ? AppColors.superficieClara : const Color(0xFFEDE8F5)),
             border: Border.all(
               color: selecionado ? AppColors.neon : cor.withValues(alpha: ativo ? 0.85 : 0.5),
               width: selecionado ? 3 : 2,

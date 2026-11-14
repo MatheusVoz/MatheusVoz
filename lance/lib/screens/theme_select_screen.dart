@@ -9,12 +9,26 @@ import '../widgets/lance_icon.dart';
 import '../widgets/lance_top_bar.dart';
 import '../widgets/pressable.dart';
 import '../widgets/rota.dart';
+import '../models/game_mode.dart';
 import 'custom_theme_screen.dart';
+import 'impostor_screen.dart';
+import 'maleta_screen.dart';
 import 'setup_screen.dart';
 
 /// Escolha do tema: grade de cards grandes com icone proprio.
+/// Abre a proxima tela do modo escolhido com o tema selecionado.
+void abrirModoComTema(BuildContext context, ModoJogo modo, ThemeCategory tema) {
+  final Widget tela = switch (modo) {
+    ModoJogo.leilao => SetupScreen(tema: tema),
+    ModoJogo.impostor => ImpostorScreen(tema: tema),
+    ModoJogo.maleta => MaletaScreen(tema: tema),
+  };
+  Navigator.of(context).push(rotaAnimada(tela));
+}
+
 class ThemeSelectScreen extends StatelessWidget {
-  const ThemeSelectScreen({super.key});
+  final ModoJogo modo;
+  const ThemeSelectScreen({super.key, this.modo = ModoJogo.leilao});
 
   @override
   Widget build(BuildContext context) {
@@ -41,8 +55,7 @@ class ThemeSelectScreen extends StatelessWidget {
                             ordem: i,
                             child: _CardTema(
                               tema: temasProntos[i],
-                              onTap: () =>
-                                  Navigator.of(context).push(rotaAnimada(SetupScreen(tema: temasProntos[i]))),
+                              onTap: () => abrirModoComTema(context, modo, temasProntos[i]),
                             ),
                           ),
                           childCount: temasProntos.length,
@@ -55,7 +68,8 @@ class ThemeSelectScreen extends StatelessWidget {
                         child: _Entrada(
                           ordem: temasProntos.length,
                           child: _CardPersonalizado(
-                            onTap: () => Navigator.of(context).push(rotaAnimada(const CustomThemeScreen())),
+                            onTap: () =>
+                                Navigator.of(context).push(rotaAnimada(CustomThemeScreen(modo: modo))),
                           ),
                         ),
                       ),
@@ -111,7 +125,7 @@ class _CardTema extends StatelessWidget {
             gradient: const LinearGradient(
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
-              colors: [Color(0xFF5523B0), Color(0xFF34107A)],
+              colors: [Color(0xFFFFFFFF), Color(0xFFF3ECFF)],
             ),
             border: Border.all(color: AppColors.roxo.withValues(alpha: 0.85), width: 2),
             boxShadow: [BoxShadow(color: AppColors.roxo.withValues(alpha: 0.35), blurRadius: 16)],

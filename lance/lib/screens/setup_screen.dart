@@ -13,7 +13,6 @@ import '../widgets/lance_card.dart';
 import '../widgets/lance_icon.dart';
 import '../widgets/lance_top_bar.dart';
 import '../widgets/option_selector.dart';
-import '../widgets/pressable.dart';
 import '../widgets/rota.dart';
 import 'auction_screen.dart';
 
@@ -34,7 +33,6 @@ class _SetupScreenState extends State<SetupScreen> {
   late int _qtdItens;
 
   final _nomes = List.generate(_maxJogadores, (_) => TextEditingController());
-  final _cores = List.generate(_maxJogadores, (i) => i);
 
   /// Itens unicos disponiveis no tema.
   late final int _disponiveis = widget.tema.itens.toSet().length;
@@ -65,17 +63,6 @@ class _SetupScreenState extends State<SetupScreen> {
     _qtdItens = GameConfig.padraoItens(_jogadores, _disponiveis);
   }
 
-  void _escolherCor(int jogador, int cor) {
-    setState(() {
-      // Se outro jogador ja usa a cor, troca as cores entre eles.
-      final outro = _cores.indexOf(cor);
-      if (outro >= 0 && outro < _jogadores && outro != jogador) {
-        _cores[outro] = _cores[jogador];
-      }
-      _cores[jogador] = cor;
-    });
-  }
-
   void _comecar() {
     final config = GameConfig(
       temaId: widget.tema.id,
@@ -85,7 +72,7 @@ class _SetupScreenState extends State<SetupScreen> {
         for (var i = 0; i < _jogadores; i++)
           PlayerSetup(
             nome: _nomes[i].text.trim().isEmpty ? 'Jogador ${i + 1}' : _nomes[i].text.trim(),
-            corIndice: _cores[i],
+            corIndice: i,
           ),
       ],
       dinheiroInicial: _dinheiro,
@@ -157,7 +144,7 @@ class _SetupScreenState extends State<SetupScreen> {
   }
 
   Widget _linhaJogador(int i) {
-    final cor = AppColors.coresJogadores[_cores[i]];
+    final cor = AppColors.coresJogadores[i % AppColors.coresJogadores.length];
     return Padding(
       key: ValueKey('jogador_$i'),
       padding: const EdgeInsets.only(bottom: 10),
@@ -185,12 +172,8 @@ class _SetupScreenState extends State<SetupScreen> {
                     width: 40,
                     height: 40,
                     alignment: Alignment.center,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: cor,
-                      boxShadow: [BoxShadow(color: cor, blurRadius: 10)],
-                    ),
-                    child: Text('${i + 1}', style: AppText.numero(18, cor: AppColors.textoSobreAmarelo)),
+                    decoration: BoxDecoration(shape: BoxShape.circle, color: cor),
+                    child: Text('${i + 1}', style: AppText.numero(16, cor: AppColors.brancoPuro)),
                   ),
                   const SizedBox(width: 10),
                   Expanded(
@@ -218,44 +201,6 @@ class _SetupScreenState extends State<SetupScreen> {
                       ),
                     ),
                   ),
-                ],
-              ),
-              const SizedBox(height: 10),
-              // Paleta de cores (tons de roxo).
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  for (var c = 0; c < AppColors.coresJogadores.length; c++)
-                    Semantics(
-                      button: true,
-                      selected: _cores[i] == c,
-                      label: 'Cor ${AppColors.nomesCores[c]}',
-                      child: Pressable(
-                        onTap: () => _escolherCor(i, c),
-                        child: AnimatedContainer(
-                          duration: const Duration(milliseconds: 200),
-                          width: 24,
-                          height: 24,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: AppColors.coresJogadores[c],
-                            border: Border.all(
-                              color: _cores[i] == c ? AppColors.branco : Colors.transparent,
-                              width: 3,
-                            ),
-                            boxShadow: _cores[i] == c
-                                ? [
-                                    BoxShadow(
-                                      color: AppColors.coresJogadores[c],
-                                      blurRadius: 12,
-                                      spreadRadius: 1,
-                                    ),
-                                  ]
-                                : null,
-                          ),
-                        ),
-                      ),
-                    ),
                 ],
               ),
             ],

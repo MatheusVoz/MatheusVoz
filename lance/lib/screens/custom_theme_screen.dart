@@ -10,12 +10,13 @@ import '../widgets/lance_dialog.dart';
 import '../widgets/lance_icon.dart';
 import '../widgets/lance_top_bar.dart';
 import '../widgets/pressable.dart';
-import '../widgets/rota.dart';
-import 'setup_screen.dart';
+import '../models/game_mode.dart';
+import 'theme_select_screen.dart';
 
 /// Tema personalizado: o usuario digita os proprios itens.
 class CustomThemeScreen extends StatefulWidget {
-  const CustomThemeScreen({super.key});
+  final ModoJogo modo;
+  const CustomThemeScreen({super.key, this.modo = ModoJogo.leilao});
 
   /// Minimo de itens (2 jogadores x lista de 3).
   static const minimoItens = 6;
@@ -65,7 +66,7 @@ class _CustomThemeScreenState extends State<CustomThemeScreen> {
   void _continuar() {
     final nome = _nome.text.trim().isEmpty ? 'Personalizado' : _nome.text.trim();
     final tema = ThemeCategory.personalizado(_itens.reversed.toList(), nome: nome);
-    Navigator.of(context).push(rotaAnimada(SetupScreen(tema: tema)));
+    abrirModoComTema(context, widget.modo, tema);
   }
 
   InputDecoration _decoracao(String dica) => InputDecoration(

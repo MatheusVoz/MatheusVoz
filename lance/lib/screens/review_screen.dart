@@ -154,7 +154,7 @@ class _ListaJogador extends StatelessWidget {
           gradient: const LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
-            colors: [Color(0xFF4A1F9A), Color(0xFF2E0F6B)],
+            colors: [Color(0xFFFFFFFF), Color(0xFFF6F0FF)],
           ),
           border: Border.all(color: p.cor, width: 2.5),
           boxShadow: [BoxShadow(color: p.cor.withValues(alpha: 0.4), blurRadius: 22)],

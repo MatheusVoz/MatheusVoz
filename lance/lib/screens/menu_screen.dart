@@ -4,16 +4,15 @@ import 'package:provider/provider.dart';
 import '../state/game_controller.dart';
 import '../widgets/glow_button.dart';
 import '../widgets/lance_background.dart';
-import '../widgets/lance_dialog.dart';
 import '../widgets/lance_icon.dart';
 import '../widgets/lance_logo.dart';
 import '../widgets/rota.dart';
 import 'auction_screen.dart';
 import 'how_to_play_screen.dart';
+import 'mode_select_screen.dart';
 import 'result_screen.dart';
 import 'review_screen.dart';
 import 'settings_screen.dart';
-import 'theme_select_screen.dart';
 
 /// Tela inicial: splash com logo animado e menu principal.
 class MenuScreen extends StatefulWidget {
@@ -60,21 +59,7 @@ class _MenuScreenState extends State<MenuScreen> with SingleTickerProviderStateM
     );
   }
 
-  Future<void> _novoLeilao() async {
-    final game = context.read<GameController>();
-    if (game.temPartida) {
-      final ok = await confirmar(
-        context,
-        titulo: 'Leilão em andamento',
-        mensagem: 'Existe uma partida salva. Começar um novo leilão vai apagá-la.',
-        sim: 'Novo leilão',
-      );
-      if (!ok || !mounted) return;
-      await game.encerrarPartida();
-    }
-    if (!mounted) return;
-    Navigator.of(context).push(rotaAnimada(const ThemeSelectScreen()));
-  }
+  void _novoJogo() => Navigator.of(context).push(rotaAnimada(const ModeSelectScreen()));
 
   void _continuar() {
     final game = context.read<GameController>();
@@ -126,12 +111,12 @@ class _MenuScreenState extends State<MenuScreen> with SingleTickerProviderStateM
                             _entrada(
                               1,
                               GlowButton(
-                                texto: 'Novo Leilão',
+                                texto: 'Novo Jogo',
                                 icone: LanceIconType.martelo,
                                 altura: 56,
                                 tamanhoTexto: 19,
                                 estilo: temSalva ? EstiloBotao.secundario : EstiloBotao.principal,
-                                onTap: _novoLeilao,
+                                onTap: _novoJogo,
                               ),
                             ),
                             const SizedBox(height: 14),

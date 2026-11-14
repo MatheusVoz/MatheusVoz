@@ -18,7 +18,7 @@ Future<bool> confirmar(
     context: context,
     barrierDismissible: true,
     barrierLabel: 'Fechar',
-    barrierColor: Colors.black.withValues(alpha: 0.7),
+    barrierColor: AppColors.roxoEscuro.withValues(alpha: 0.35),
     transitionDuration: const Duration(milliseconds: 320),
     pageBuilder: (ctx, _, _) => Center(
       child: Padding(

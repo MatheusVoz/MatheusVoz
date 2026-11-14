@@ -1,82 +1,81 @@
 import 'package:material_ui/material_ui.dart';
 
-/// Paleta oficial do LANCE!: roxo, amarelo e branco.
-/// Fundo roxo, destaques e botoes principais em amarelo, textos em branco.
+/// Paleta oficial do LANCE! (tema claro): fundo claro, roxo e amarelo de destaque.
 class AppColors {
   AppColors._();
 
-  /// Fundo roxo profundo.
-  static const fundo = Color(0xFF2A0D5E);
+  /// Fundo claro (branco levemente lilas).
+  static const fundo = Color(0xFFF7F3FF);
 
-  /// Roxo mais escuro usado nos gradientes do fundo e como texto sobre amarelo.
-  static const roxoEscuro = Color(0xFF1C0742);
+  /// Roxo escuro: textos fortes e texto sobre amarelo.
+  static const roxoEscuro = Color(0xFF24104F);
 
-  /// Roxo principal (cards, botoes secundarios, bordas).
+  /// Roxo principal (bordas, detalhes, destaques).
   static const roxo = Color(0xFF7B2FF7);
 
-  /// Amarelo de destaque (brilhos, selecao, botoes principais).
+  /// Amarelo de destaque (botoes principais, selecao, coroa).
   /// O nome "neon" foi mantido para nao quebrar o codigo existente.
-  static const neon = Color(0xFFFFD23F);
+  static const neon = Color(0xFFFFC81F);
 
   /// Amarelo, nome explicito.
   static const amarelo = neon;
 
-  /// Texto secundario: branco levemente lilas.
-  static const lilas = Color(0xFFE9DEFF);
+  /// Texto secundario (roxo acinzentado).
+  static const lilas = Color(0xFF6E5C93);
 
-  /// Branco para textos principais.
-  static const branco = Color(0xFFFFFFFF);
+  /// Texto principal. (O nome "branco" vem da versao escura; no tema claro
+  /// e o roxo bem escuro usado em titulos e textos importantes.)
+  static const branco = roxoEscuro;
 
-  /// Superficie dos cards.
-  static const superficie = Color(0xFF3B1680);
+  /// Branco de verdade, para textos sobre fundos roxos.
+  static const brancoPuro = Color(0xFFFFFFFF);
 
-  /// Superficie um pouco mais clara.
-  static const superficieClara = Color(0xFF4A1F9A);
+  /// Superficie dos cards (branco).
+  static const superficie = Color(0xFFFFFFFF);
+
+  /// Superficie levemente lilas (campos, botoes secundarios).
+  static const superficieClara = Color(0xFFEFE7FF);
 
   /// Elementos desativados.
-  static const desativado = Color(0xFF6E5A96);
+  static const desativado = Color(0xFFB9AFCF);
 
   /// Alertas.
-  static const alerta = Color(0xFFFF6B8B);
+  static const alerta = Color(0xFFE5395B);
 
   /// Texto sobre fundo amarelo.
   static const textoSobreAmarelo = roxoEscuro;
 
-  /// Cores de destaque que os jogadores podem escolher (amarelos, brancos e lilases).
+  /// Cores atribuidas automaticamente aos jogadores (bem distintas no fundo claro).
   static const coresJogadores = <Color>[
-    Color(0xFFFFD23F), // Amarelo
-    Color(0xFFFFFFFF), // Branco
-    Color(0xFFC9A7FF), // Lilas
-    Color(0xFFFFA62B), // Ouro
-    Color(0xFF9F7BFF), // Lavanda
-    Color(0xFFFFF09A), // Creme
-    Color(0xFFE77BFF), // Rosa-violeta
-    Color(0xFF7FE0FF), // Azul-claro
-  ];
-
-  static const nomesCores = <String>[
-    'Amarelo',
-    'Branco',
-    'Lilás',
-    'Ouro',
-    'Lavanda',
-    'Creme',
-    'Rosa',
-    'Azul',
+    Color(0xFF7B2FF7), // Roxo
+    Color(0xFFF5A300), // Amarelo-ouro
+    Color(0xFFE5397F), // Rosa
+    Color(0xFF1FA0E0), // Azul
+    Color(0xFF20B26B), // Verde
+    Color(0xFFFF6B2C), // Laranja
+    Color(0xFF9C6BFF), // Lavanda
+    Color(0xFF2D3A8C), // Anil
   ];
 
   /// Gradiente padrao do fundo das telas.
   static const gradienteFundo = LinearGradient(
     begin: Alignment.topCenter,
     end: Alignment.bottomCenter,
-    colors: [Color(0xFF4A1A9E), fundo, fundo, roxoEscuro],
-    stops: [0.0, 0.4, 0.7, 1.0],
+    colors: [Color(0xFFFFFFFF), fundo, Color(0xFFEFE6FF)],
+    stops: [0.0, 0.5, 1.0],
   );
 
   /// Gradiente dos botoes principais (amarelo).
   static const gradienteBotao = LinearGradient(
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
-    colors: [Color(0xFFFFE57A), neon, Color(0xFFFFB800)],
+    colors: [Color(0xFFFFDD66), neon, Color(0xFFFFB300)],
+  );
+
+  /// Gradiente roxo (card do item, destaques).
+  static const gradienteRoxo = LinearGradient(
+    begin: Alignment.topLeft,
+    end: Alignment.bottomRight,
+    colors: [Color(0xFF9150FF), roxo, Color(0xFF5A1BC4)],
   );
 }

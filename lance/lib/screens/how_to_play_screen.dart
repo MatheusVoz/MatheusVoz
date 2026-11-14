@@ -47,6 +47,16 @@ class HowToPlayScreen extends StatelessWidget {
       'O juiz decide',
       'Uma pessoa de fora analisa as listas e ordena do 1º ao último. O campeão ganha a coroa!',
     ),
+    (
+      LanceIconType.mascara,
+      'Modo Impostor',
+      'Passe o celular: todos veem o mesmo item, menos um, que vê IMPOSTOR. Conversem, votem e o app mostra quem ganhou.',
+    ),
+    (
+      LanceIconType.maleta,
+      'Modo Maleta',
+      'Cinco maletas, cada uma com um item surpresa do tema. Escolha uma e toque para abrir.',
+    ),
   ];
 
   @override
@@ -97,7 +107,7 @@ class _Passo extends StatelessWidget {
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(22),
-        gradient: const LinearGradient(colors: [Color(0xFF4A1F9A), Color(0xFF34107A)]),
+        gradient: const LinearGradient(colors: [Color(0xFFFFFFFF), Color(0xFFF6F0FF)]),
         border: Border.all(color: AppColors.roxo.withValues(alpha: 0.6), width: 1.5),
       ),
       child: Row(

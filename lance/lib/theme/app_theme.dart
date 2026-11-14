@@ -9,15 +9,15 @@ class AppTheme {
 
   static ThemeData get tema {
     final base = ThemeData(
-      brightness: Brightness.dark,
+      brightness: Brightness.light,
       useMaterial3: true,
       fontFamily: AppText.fonteTexto,
       scaffoldBackgroundColor: AppColors.fundo,
-      colorScheme: const ColorScheme.dark(
+      colorScheme: const ColorScheme.light(
         primary: AppColors.roxo,
         secondary: AppColors.neon,
         surface: AppColors.superficie,
-        onPrimary: AppColors.branco,
+        onPrimary: AppColors.brancoPuro,
         onSurface: AppColors.lilas,
       ),
       splashFactory: NoSplash.splashFactory,
@@ -25,9 +25,9 @@ class AppTheme {
     );
     return base.copyWith(
       textSelectionTheme: const TextSelectionThemeData(
-        cursorColor: AppColors.neon,
-        selectionColor: Color(0x66FFD23F),
-        selectionHandleColor: AppColors.neon,
+        cursorColor: AppColors.roxo,
+        selectionColor: Color(0x557B2FF7),
+        selectionHandleColor: AppColors.roxo,
       ),
       snackBarTheme: SnackBarThemeData(
         backgroundColor: AppColors.superficieClara,

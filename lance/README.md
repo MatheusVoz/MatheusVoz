@@ -39,7 +39,7 @@ Para um tema novo, copie um bloco `ThemeCategory`, troque `id`, `nome`, `descric
 
 ## Regras implementadas
 
-- 2, 4 ou 6 jogadores; R$20, R$30 ou R$50.
+- De 2 a 6 jogadores (cores atribuídas automaticamente); R$20, R$30 ou R$50.
 - Itens no leilão: padrão = jogadores × 4 + 4; mínimo = jogadores × 2; ordem aleatória.
 - Lance livre: de R$1 até todo o saldo do jogador.
 - Sem limite de itens por jogador: cada um arremata quantos conseguir pagar.
@@ -47,6 +47,12 @@ Para um tema novo, copie um bloco `ThemeCategory`, troque `id`, `nome`, `descric
 - Fim: acabaram os itens ou ninguém mais tem dinheiro.
 - Desfazer volta a última venda (ou pulo) e devolve o dinheiro.
 - A partida em andamento é salva a cada ação e pode ser retomada pelo menu.
+
+## Outros modos
+
+- **Impostor** (3 a 10 pessoas): o celular passa de mão em mão; todos veem o mesmo item do tema, menos um,
+  que vê IMPOSTOR. O grupo conversa e vota; o app mostra se o impostor ganhou ou perdeu.
+- **Maleta**: 5 maletas numeradas, cada uma com um item sorteado do tema. Toque para abrir.
 
 ## Testes
 
@@ -56,6 +62,7 @@ flutter test
 
 - `test/game_controller_test.dart`: regras, validações, desfazer, salvamento e simulações aleatórias de
   todas as combinações (2/4/6 jogadores × R$20/30/50).
+- `test/modos_test.dart`: regras e fluxos completos dos modos Impostor (3, 5 e 10 pessoas) e Maleta.
 - `test/fluxo_test.dart`: joga partidas completas pela interface (menu → tema → configuração → leilão →
   encerrado → revisão → pódio → jogar de novo) para 2/4/6 jogadores × R$20/30/50 em três tamanhos de
   tela (360×640, 393×851, 430×932), com as fontes reais, falhando em qualquer estouro de layout.

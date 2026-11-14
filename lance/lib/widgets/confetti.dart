@@ -34,7 +34,7 @@ class _Particula {
         AppColors.lilas,
         Color(0xFFFFB800),
         Color(0xFFFFF09A),
-        Colors.white,
+        Color(0xFF1FA0E0),
       ][r.nextInt(6)];
 }
 
