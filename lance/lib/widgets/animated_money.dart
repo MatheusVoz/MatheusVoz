@@ -66,7 +66,7 @@ class _AnimatedMoneyState extends State<AnimatedMoney> with SingleTickerProvider
             maxLines: 1,
             style: AppText.numero(
               widget.tamanho,
-              cor: animando && diminuindo ? const Color(0xFFFF9EE0) : widget.cor,
+              cor: animando && diminuindo ? AppColors.neon : widget.cor,
             ).copyWith(shadows: animando ? AppText.brilho : null),
           ),
         );

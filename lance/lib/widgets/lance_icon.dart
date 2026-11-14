@@ -54,8 +54,8 @@ class LanceIcon extends StatelessWidget {
     this.tipo, {
     super.key,
     this.tamanho = 32,
-    this.preenchimento = AppColors.roxo,
-    this.contorno = const Color(0xFFE9D6FF),
+    this.preenchimento = AppColors.neon,
+    this.contorno = AppColors.roxoEscuro,
   });
 
   @override

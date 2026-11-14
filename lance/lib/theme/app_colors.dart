@@ -1,74 +1,82 @@
 import 'package:material_ui/material_ui.dart';
 
-/// Paleta oficial do LANCE!: roxo e preto.
+/// Paleta oficial do LANCE!: roxo, amarelo e branco.
+/// Fundo roxo, destaques e botoes principais em amarelo, textos em branco.
 class AppColors {
   AppColors._();
 
-  /// Fundo preto profundo.
-  static const fundo = Color(0xFF0A0A0F);
+  /// Fundo roxo profundo.
+  static const fundo = Color(0xFF2A0D5E);
 
-  /// Roxo bem escuro usado nos gradientes do fundo.
-  static const roxoEscuro = Color(0xFF1A0B2E);
+  /// Roxo mais escuro usado nos gradientes do fundo e como texto sobre amarelo.
+  static const roxoEscuro = Color(0xFF1C0742);
 
-  /// Roxo principal da marca.
-  static const roxo = Color(0xFF8B2CF5);
+  /// Roxo principal (cards, botoes secundarios, bordas).
+  static const roxo = Color(0xFF7B2FF7);
 
-  /// Roxo neon para destaques e brilhos.
-  static const neon = Color(0xFFB266FF);
+  /// Amarelo de destaque (brilhos, selecao, botoes principais).
+  /// O nome "neon" foi mantido para nao quebrar o codigo existente.
+  static const neon = Color(0xFFFFD23F);
 
-  /// Lilas claro para textos secundarios.
-  static const lilas = Color(0xFFD9B8FF);
+  /// Amarelo, nome explicito.
+  static const amarelo = neon;
 
-  /// Branco, apenas para textos importantes.
+  /// Texto secundario: branco levemente lilas.
+  static const lilas = Color(0xFFE9DEFF);
+
+  /// Branco para textos principais.
   static const branco = Color(0xFFFFFFFF);
 
-  /// Superficie de cards (preto arroxeado).
-  static const superficie = Color(0xFF15101F);
+  /// Superficie dos cards.
+  static const superficie = Color(0xFF3B1680);
 
   /// Superficie um pouco mais clara.
-  static const superficieClara = Color(0xFF221733);
+  static const superficieClara = Color(0xFF4A1F9A);
 
-  /// Cinza para elementos desativados.
-  static const desativado = Color(0xFF4A4458);
+  /// Elementos desativados.
+  static const desativado = Color(0xFF6E5A96);
 
-  /// Vermelho-rosado discreto para alertas (sem fugir da paleta).
-  static const alerta = Color(0xFFFF5C9E);
+  /// Alertas.
+  static const alerta = Color(0xFFFF6B8B);
 
-  /// Cores de destaque que os jogadores podem escolher (tons de roxo/lilas/violeta).
+  /// Texto sobre fundo amarelo.
+  static const textoSobreAmarelo = roxoEscuro;
+
+  /// Cores de destaque que os jogadores podem escolher (amarelos, brancos e lilases).
   static const coresJogadores = <Color>[
-    Color(0xFF8B2CF5), // Roxo
-    Color(0xFFB266FF), // Neon
-    Color(0xFFD9B8FF), // Lilas
-    Color(0xFFD946EF), // Magenta
-    Color(0xFF6D5BFF), // Indigo
-    Color(0xFFF0A6FF), // Orquidea
-    Color(0xFFA78BFA), // Lavanda
-    Color(0xFF9E00FF), // Violeta eletrico
+    Color(0xFFFFD23F), // Amarelo
+    Color(0xFFFFFFFF), // Branco
+    Color(0xFFC9A7FF), // Lilas
+    Color(0xFFFFA62B), // Ouro
+    Color(0xFF9F7BFF), // Lavanda
+    Color(0xFFFFF09A), // Creme
+    Color(0xFFE77BFF), // Rosa-violeta
+    Color(0xFF7FE0FF), // Azul-claro
   ];
 
   static const nomesCores = <String>[
-    'Roxo',
-    'Neon',
+    'Amarelo',
+    'Branco',
     'Lilás',
-    'Magenta',
-    'Índigo',
-    'Orquídea',
+    'Ouro',
     'Lavanda',
-    'Violeta',
+    'Creme',
+    'Rosa',
+    'Azul',
   ];
 
   /// Gradiente padrao do fundo das telas.
   static const gradienteFundo = LinearGradient(
     begin: Alignment.topCenter,
     end: Alignment.bottomCenter,
-    colors: [roxoEscuro, fundo, fundo, Color(0xFF12071F)],
-    stops: [0.0, 0.45, 0.75, 1.0],
+    colors: [Color(0xFF4A1A9E), fundo, fundo, roxoEscuro],
+    stops: [0.0, 0.4, 0.7, 1.0],
   );
 
-  /// Gradiente dos botoes principais.
+  /// Gradiente dos botoes principais (amarelo).
   static const gradienteBotao = LinearGradient(
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
-    colors: [neon, roxo, Color(0xFF6A16C9)],
+    colors: [Color(0xFFFFE57A), neon, Color(0xFFFFB800)],
   );
 }

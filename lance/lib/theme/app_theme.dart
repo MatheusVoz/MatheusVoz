@@ -26,7 +26,7 @@ class AppTheme {
     return base.copyWith(
       textSelectionTheme: const TextSelectionThemeData(
         cursorColor: AppColors.neon,
-        selectionColor: Color(0x668B2CF5),
+        selectionColor: Color(0x66FFD23F),
         selectionHandleColor: AppColors.neon,
       ),
       snackBarTheme: SnackBarThemeData(

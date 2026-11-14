@@ -12,7 +12,7 @@ import '../widgets/lance_top_bar.dart';
 import '../widgets/pressable.dart';
 import '../widgets/rota.dart';
 import 'auction_screen.dart';
-import 'judge_screen.dart';
+import 'result_screen.dart';
 
 /// Revisao: a lista de cada jogador em abas (deslize para o lado).
 class ReviewScreen extends StatefulWidget {
@@ -92,7 +92,7 @@ class _ReviewScreenState extends State<ReviewScreen> {
                             js[i].nome,
                             style: AppText.texto(
                               15,
-                              cor: sel ? AppColors.fundo : AppColors.branco,
+                              cor: sel ? AppColors.textoSobreAmarelo : AppColors.branco,
                               peso: FontWeight.w700,
                             ),
                           ),
@@ -126,7 +126,7 @@ class _ReviewScreenState extends State<ReviewScreen> {
                     altura: 64,
                     onTap: () {
                       g.irParaJuiz();
-                      Navigator.of(context).pushReplacement(rotaAnimada(const JudgeScreen()));
+                      Navigator.of(context).pushReplacement(rotaAnimada(const ResultScreen()));
                     },
                   ),
                 ),
@@ -156,7 +156,7 @@ class _ListaJogador extends StatelessWidget {
           gradient: const LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
-            colors: [Color(0xFF231338), Color(0xFF110B1A)],
+            colors: [Color(0xFF4A1F9A), Color(0xFF2E0F6B)],
           ),
           border: Border.all(color: p.cor, width: 2.5),
           boxShadow: [BoxShadow(color: p.cor.withValues(alpha: 0.4), blurRadius: 22)],
@@ -234,7 +234,7 @@ class _ListaJogador extends StatelessWidget {
           height: 30,
           alignment: Alignment.center,
           decoration: BoxDecoration(shape: BoxShape.circle, color: cor),
-          child: Text('$n', style: AppText.numero(14, cor: AppColors.fundo)),
+          child: Text('$n', style: AppText.numero(14, cor: AppColors.textoSobreAmarelo)),
         ),
         const SizedBox(width: 12),
         Expanded(

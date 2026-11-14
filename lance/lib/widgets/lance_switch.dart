@@ -25,7 +25,7 @@ class LanceSwitch extends StatelessWidget {
             borderRadius: BorderRadius.circular(18),
             gradient: valor ? AppColors.gradienteBotao : null,
             color: valor ? null : AppColors.desativado.withValues(alpha: 0.5),
-            border: Border.all(color: valor ? const Color(0xFFE2C6FF) : AppColors.desativado, width: 2),
+            border: Border.all(color: valor ? AppColors.branco : AppColors.desativado, width: 2),
             boxShadow: valor
                 ? [BoxShadow(color: AppColors.neon.withValues(alpha: 0.5), blurRadius: 14)]
                 : null,

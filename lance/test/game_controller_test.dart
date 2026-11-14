@@ -198,10 +198,24 @@ void main() {
   test('ranking do juiz', () {
     final g = _novo(_config(4, 30, 3));
     g.irParaJuiz();
+    expect(g.fase, FasePartida.juiz);
     expect(g.ranking, [0, 1, 2, 3]);
-    g.confirmarRanking([2, 0, 3, 1]);
-    expect(g.fase, FasePartida.podio);
-    expect(g.ranking.first, 2);
+    g.darPonto(2, 1);
+    g.darPonto(2, 1);
+    g.darPonto(3, 1);
+    expect(g.ranking, [2, 3, 0, 1]);
+    g.darPonto(3, 2);
+    expect(g.ranking.first, 3);
+    g.darPonto(1, -1); // nunca fica negativo
+    expect(g.pontos(1), 0);
+    // Pontos sao salvos e restaurados.
+    final h = GameController()..persistir = false;
+    h.carregarJson(g.toJson());
+    expect(h.pontos(3), 3);
+    expect(h.ranking.first, 3);
+    // Jogar de novo zera os pontos.
+    g.jogarNovamente();
+    expect(g.pontos(3), 0);
   });
 
   // Garante que o tipo Player continua serializavel.

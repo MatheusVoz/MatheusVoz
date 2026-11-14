@@ -34,7 +34,7 @@ class ThemeSelectScreen extends StatelessWidget {
                           crossAxisCount: 2,
                           mainAxisSpacing: 14,
                           crossAxisSpacing: 14,
-                          childAspectRatio: 0.98,
+                          childAspectRatio: 1.25,
                         ),
                         delegate: SliverChildBuilderDelegate(
                           (context, i) => _Entrada(
@@ -111,7 +111,7 @@ class _CardTema extends StatelessWidget {
             gradient: const LinearGradient(
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
-              colors: [Color(0xFF2A1450), Color(0xFF120A20)],
+              colors: [Color(0xFF5523B0), Color(0xFF34107A)],
             ),
             border: Border.all(color: AppColors.roxo.withValues(alpha: 0.85), width: 2),
             boxShadow: [BoxShadow(color: AppColors.roxo.withValues(alpha: 0.35), blurRadius: 16)],
@@ -125,12 +125,7 @@ class _CardTema extends StatelessWidget {
                   const SizedBox(height: 8),
                   FittedBox(
                     fit: BoxFit.scaleDown,
-                    child: Text(tema.nome.toUpperCase(), style: AppText.titulo(17)),
-                  ),
-                  const SizedBox(height: 2),
-                  Text(
-                    '${tema.itens.length} itens',
-                    style: AppText.texto(13, cor: AppColors.lilas.withValues(alpha: 0.75)),
+                    child: Text(tema.nome.toUpperCase(), style: AppText.titulo(15)),
                   ),
                 ],
               );
@@ -158,7 +153,7 @@ class _CardPersonalizado extends StatelessWidget {
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(26),
             gradient: AppColors.gradienteBotao,
-            border: Border.all(color: const Color(0xFFE2C6FF), width: 2),
+            border: Border.all(color: AppColors.branco, width: 2),
             boxShadow: [BoxShadow(color: AppColors.neon.withValues(alpha: 0.5), blurRadius: 22)],
           ),
           child: Row(
@@ -166,8 +161,8 @@ class _CardPersonalizado extends StatelessWidget {
               const LanceIcon(
                 LanceIconType.lapis,
                 tamanho: 52,
-                preenchimento: Color(0xFF5A12B0),
-                contorno: Color(0xFFF4E8FF),
+                preenchimento: AppColors.branco,
+                contorno: AppColors.roxoEscuro,
               ),
               const SizedBox(width: 16),
               Expanded(
@@ -176,12 +171,10 @@ class _CardPersonalizado extends StatelessWidget {
                   children: [
                     FittedBox(
                       fit: BoxFit.scaleDown,
-                      child: Text('TEMA PERSONALIZADO', style: AppText.titulo(18)),
-                    ),
-                    const SizedBox(height: 2),
-                    Text(
-                      'Digite os seus próprios itens',
-                      style: AppText.texto(14, cor: const Color(0xFFF1E4FF)),
+                      child: Text(
+                        'TEMA PERSONALIZADO',
+                        style: AppText.titulo(16, cor: AppColors.textoSobreAmarelo),
+                      ),
                     ),
                   ],
                 ),

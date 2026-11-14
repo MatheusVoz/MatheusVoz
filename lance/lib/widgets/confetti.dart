@@ -32,8 +32,8 @@ class _Particula {
         AppColors.roxo,
         AppColors.neon,
         AppColors.lilas,
-        Color(0xFFD946EF),
-        Color(0xFF6D5BFF),
+        Color(0xFFFFB800),
+        Color(0xFFFFF09A),
         Colors.white,
       ][r.nextInt(6)];
 }

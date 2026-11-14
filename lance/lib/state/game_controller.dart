@@ -11,6 +11,8 @@ import '../models/theme_category.dart';
 import '../theme/app_colors.dart';
 
 /// Etapas da partida (salvas para retomar se o app fechar).
+/// [juiz] e a tela de resultado (tabela de pontos). [podio] ficou apenas
+/// para compatibilidade com partidas salvas em versoes antigas.
 enum FasePartida { leilao, revisao, juiz, podio }
 
 /// Motivo pelo qual o leilao terminou.
@@ -61,12 +63,21 @@ class GameController extends ChangeNotifier {
   FasePartida _fase = FasePartida.leilao;
   List<int> _ranking = [];
 
+  /// Pontos dados pelo juiz a cada jogador (id -> pontos).
+  final Map<int, int> _pontos = {};
+
   GameConfig? get config => _config;
   List<String> get itens => List.unmodifiable(_itens);
   int get indiceAtual => _indice;
   List<Player> get jogadores => List.unmodifiable(_jogadores);
   FasePartida get fase => _fase;
   List<int> get ranking => List.unmodifiable(_ranking);
+
+  /// Pontos atuais do jogador.
+  int pontos(int id) => _pontos[id] ?? 0;
+
+  /// Jogadores ordenados do 1o ao ultimo (mais pontos primeiro).
+  List<Player> get classificacao => _ranking.map(jogador).toList();
   bool get temPartida => _config != null;
   bool get podeDesfazer => _historico.isNotEmpty;
   AcaoLeilao? get ultimaAcao => _historico.isEmpty ? null : _historico.last;
@@ -152,6 +163,7 @@ class GameController extends ChangeNotifier {
     _indice = 0;
     _historico.clear();
     _ranking = [];
+    _pontos.clear();
     _fase = FasePartida.leilao;
     _jogadores = [
       for (var i = 0; i < config.jogadores.length; i++)
@@ -219,6 +231,7 @@ class GameController extends ChangeNotifier {
     _indice = a.indiceItem;
     _fase = FasePartida.leilao;
     _ranking = [];
+    _pontos.clear();
     _mudou();
     return a;
   }
@@ -229,19 +242,28 @@ class GameController extends ChangeNotifier {
     _mudou();
   }
 
+  /// Abre a tela de resultado (tabela de pontos do juiz).
   void irParaJuiz() {
     _fase = FasePartida.juiz;
-    if (_ranking.length != _jogadores.length) {
-      _ranking = _jogadores.map((j) => j.id).toList();
-    }
+    _reordenar();
     _mudou();
   }
 
-  /// Confirma o ranking decidido pelo juiz (ids do 1o ao ultimo).
-  void confirmarRanking(List<int> ids) {
-    _ranking = List.of(ids);
-    _fase = FasePartida.podio;
+  /// O juiz da ou tira pontos de um jogador (entre 0 e 99).
+  void darPonto(int id, int delta) {
+    _pontos[id] = (pontos(id) + delta).clamp(0, 99);
+    _reordenar();
     _mudou();
+  }
+
+  /// Ordena por pontos (maior primeiro); empate mantem a ordem dos jogadores.
+  void _reordenar() {
+    final ids = _jogadores.map((j) => j.id).toList();
+    ids.sort((a, b) {
+      final d = pontos(b).compareTo(pontos(a));
+      return d != 0 ? d : a.compareTo(b);
+    });
+    _ranking = ids;
   }
 
   /// Encerra e apaga a partida salva.
@@ -251,6 +273,7 @@ class GameController extends ChangeNotifier {
     _jogadores = [];
     _historico.clear();
     _ranking = [];
+    _pontos.clear();
     _indice = 0;
     _fase = FasePartida.leilao;
     notifyListeners();
@@ -277,6 +300,7 @@ class GameController extends ChangeNotifier {
     'historico': _historico.map((a) => a.toJson()).toList(),
     'fase': _fase.name,
     'ranking': _ranking,
+    'pontos': _pontos.map((k, v) => MapEntry('$k', v)),
   };
 
   void carregarJson(Map<String, dynamic> j) {
@@ -291,6 +315,12 @@ class GameController extends ChangeNotifier {
       ..addAll((j['historico'] as List).map((e) => AcaoLeilao.fromJson(Map<String, dynamic>.from(e as Map))));
     _fase = FasePartida.values.firstWhere((f) => f.name == j['fase'], orElse: () => FasePartida.leilao);
     _ranking = List<int>.from(j['ranking'] as List);
+    _pontos
+      ..clear()
+      ..addAll(((j['pontos'] as Map?) ?? {}).map((k, v) => MapEntry(int.parse('$k'), v as int)));
+    // Partidas antigas salvas no podio abrem na tabela de resultado.
+    if (_fase == FasePartida.podio) _fase = FasePartida.juiz;
+    if (_fase == FasePartida.juiz) _reordenar();
   }
 
   Future<void> _salvar() async {

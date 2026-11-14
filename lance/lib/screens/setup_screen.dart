@@ -125,7 +125,7 @@ class _SetupScreenState extends State<SetupScreen> {
                       rotulo: (v) => '$v',
                       prefixoChave: 'jogadores',
                       habilitado: _jogadoresValido,
-                      altura: 64,
+                      altura: 52,
                       onChanged: (v) => setState(() {
                         _jogadores = v;
                         _ajustarLista();
@@ -160,22 +160,6 @@ class _SetupScreenState extends State<SetupScreen> {
                     const SizedBox(height: 18),
                     const SectionTitle('Itens no leilão'),
                     _seletorItens(),
-                    const SizedBox(height: 14),
-                    LanceCard(
-                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                      child: Row(
-                        children: [
-                          const LanceIcon(LanceIconType.pular, tamanho: 30),
-                          const SizedBox(width: 12),
-                          Expanded(
-                            child: Text(
-                              'Ordem dos itens: aleatória',
-                              style: AppText.texto(15, cor: AppColors.lilas),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
                   ],
                 ),
               ),
@@ -184,8 +168,8 @@ class _SetupScreenState extends State<SetupScreen> {
                 child: GlowButton(
                   texto: 'Começar Leilão',
                   icone: LanceIconType.martelo,
-                  altura: 66,
-                  tamanhoTexto: 22,
+                  altura: 56,
+                  tamanhoTexto: 19,
                   onTap: _comecar,
                 ),
               ),
@@ -230,7 +214,7 @@ class _SetupScreenState extends State<SetupScreen> {
                       color: cor,
                       boxShadow: [BoxShadow(color: cor, blurRadius: 10)],
                     ),
-                    child: Text('${i + 1}', style: AppText.numero(18, cor: AppColors.fundo)),
+                    child: Text('${i + 1}', style: AppText.numero(18, cor: AppColors.textoSobreAmarelo)),
                   ),
                   const SizedBox(width: 10),
                   Expanded(
@@ -274,8 +258,8 @@ class _SetupScreenState extends State<SetupScreen> {
                         onTap: () => _escolherCor(i, c),
                         child: AnimatedContainer(
                           duration: const Duration(milliseconds: 200),
-                          width: 30,
-                          height: 30,
+                          width: 24,
+                          height: 24,
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
                             color: AppColors.coresJogadores[c],
@@ -338,7 +322,7 @@ class _SetupScreenState extends State<SetupScreen> {
           ),
           const SizedBox(height: 8),
           Text(
-            'Mínimo $_minItens ($_jogadores jogadores × $_lista itens)  •  Máximo $_disponiveis',
+            'mín $_minItens  •  máx $_disponiveis',
             textAlign: TextAlign.center,
             style: AppText.texto(13, cor: AppColors.lilas.withValues(alpha: 0.7)),
           ),

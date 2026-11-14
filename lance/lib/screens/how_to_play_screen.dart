@@ -97,7 +97,7 @@ class _Passo extends StatelessWidget {
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(22),
-        gradient: const LinearGradient(colors: [Color(0xFF221338), Color(0xFF120C1C)]),
+        gradient: const LinearGradient(colors: [Color(0xFF4A1F9A), Color(0xFF34107A)]),
         border: Border.all(color: AppColors.roxo.withValues(alpha: 0.6), width: 1.5),
       ),
       child: Row(
@@ -126,7 +126,7 @@ class _Passo extends StatelessWidget {
                   height: 26,
                   alignment: Alignment.center,
                   decoration: const BoxDecoration(shape: BoxShape.circle, gradient: AppColors.gradienteBotao),
-                  child: Text('$numero', style: AppText.numero(12)),
+                  child: Text('$numero', style: AppText.numero(12, cor: AppColors.textoSobreAmarelo)),
                 ),
               ),
             ],

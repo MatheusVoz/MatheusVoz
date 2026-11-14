@@ -23,7 +23,7 @@ class OptionSelector<T> extends StatelessWidget {
     required this.rotulo,
     required this.onChanged,
     this.habilitado,
-    this.altura = 58,
+    this.altura = 48,
     this.prefixoChave = 'op',
   });
 
@@ -60,7 +60,7 @@ class OptionSelector<T> extends StatelessWidget {
             color: sel ? null : (ativo ? AppColors.superficieClara : AppColors.superficie),
             border: Border.all(
               color: sel
-                  ? const Color(0xFFE2C6FF)
+                  ? AppColors.branco
                   : ativo
                   ? AppColors.roxo.withValues(alpha: 0.6)
                   : AppColors.desativado.withValues(alpha: 0.5),
@@ -79,7 +79,7 @@ class OptionSelector<T> extends StatelessWidget {
                 style: AppText.numero(
                   altura * 0.36,
                   cor: sel
-                      ? AppColors.branco
+                      ? AppColors.textoSobreAmarelo
                       : ativo
                       ? AppColors.lilas
                       : AppColors.desativado,

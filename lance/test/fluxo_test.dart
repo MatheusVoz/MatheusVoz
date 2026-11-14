@@ -146,20 +146,21 @@ Future<void> jogarPartida(
 
   await tocar(t, find.text('Chamar o Juiz'));
   await esperar(t, 1000);
-  expect(find.text('Decisão do Juiz'), findsOneWidget);
-  // Arrasta o ultimo para o topo usando o seletor de posicao.
+  expect(find.text('Resultado'), findsOneWidget);
+  expect(game.fase, FasePartida.juiz);
+  // O juiz da 2 pontos ao ultimo jogador: ele sobe para o topo da tabela.
   final ultimo = game.jogadores.last;
-  await tocar(t, find.text(ultimo.nome));
-  await esperar(t, 600);
-  await tocar(t, find.text('1º'));
-  await esperar(t, 600);
-  if (capturas) await capturar(t, '09_juiz_$tela');
-  await tocar(t, find.text('Confirmar Ranking'));
-  await esperar(t, 3200);
-  expect(game.fase, FasePartida.podio);
+  await tocar(t, find.byKey(ValueKey('mais_${ultimo.id}')));
+  await esperar(t, 300);
+  await tocar(t, find.byKey(ValueKey('mais_${ultimo.id}')));
+  await esperar(t, 900);
+  expect(game.pontos(ultimo.id), 2);
   expect(game.ranking.first, ultimo.id);
-  expect(find.text('PÓDIO'), findsOneWidget);
-  if (capturas) await capturar(t, '10_podio_$tela');
+  // E 1 ponto ao primeiro, que fica em segundo.
+  await tocar(t, find.byKey(ValueKey('mais_${game.jogadores.first.id}')));
+  await esperar(t, 900);
+  expect(game.ranking[1], game.jogadores.first.id);
+  if (capturas) await capturar(t, '09_resultado_$tela');
 
   // Jogar de novo com as mesmas configuracoes.
   await tocar(t, find.text('Jogar de novo'));

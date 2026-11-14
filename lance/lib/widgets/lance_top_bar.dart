@@ -36,7 +36,7 @@ class LanceTopBar extends StatelessWidget {
                 textAlign: TextAlign.center,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
-                style: AppText.titulo(21).copyWith(shadows: AppText.brilho),
+                style: AppText.titulo(18).copyWith(shadows: AppText.brilho),
               ),
             ),
             acao ?? const SizedBox(width: 48),

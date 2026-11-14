@@ -2,8 +2,6 @@ import 'package:material_ui/material_ui.dart';
 import 'package:provider/provider.dart';
 
 import '../state/game_controller.dart';
-import '../theme/app_colors.dart';
-import '../theme/app_text.dart';
 import '../widgets/glow_button.dart';
 import '../widgets/lance_background.dart';
 import '../widgets/lance_dialog.dart';
@@ -12,8 +10,7 @@ import '../widgets/lance_logo.dart';
 import '../widgets/rota.dart';
 import 'auction_screen.dart';
 import 'how_to_play_screen.dart';
-import 'judge_screen.dart';
-import 'podium_screen.dart';
+import 'result_screen.dart';
 import 'review_screen.dart';
 import 'settings_screen.dart';
 import 'theme_select_screen.dart';
@@ -65,7 +62,7 @@ class _MenuScreenState extends State<MenuScreen> with SingleTickerProviderStateM
 
   Future<void> _novoLeilao() async {
     final game = context.read<GameController>();
-    if (game.temPartida && game.fase != FasePartida.podio) {
+    if (game.temPartida) {
       final ok = await confirmar(
         context,
         titulo: 'Leilão em andamento',
@@ -84,8 +81,8 @@ class _MenuScreenState extends State<MenuScreen> with SingleTickerProviderStateM
     final Widget tela = switch (game.fase) {
       FasePartida.leilao => const AuctionScreen(),
       FasePartida.revisao => const ReviewScreen(),
-      FasePartida.juiz => const JudgeScreen(),
-      FasePartida.podio => const PodiumScreen(),
+      FasePartida.juiz => const ResultScreen(),
+      FasePartida.podio => const ResultScreen(),
     };
     Navigator.of(context).push(rotaAnimada(tela));
   }
@@ -93,13 +90,13 @@ class _MenuScreenState extends State<MenuScreen> with SingleTickerProviderStateM
   @override
   Widget build(BuildContext context) {
     final game = context.watch<GameController>();
-    final temSalva = game.temPartida && game.fase != FasePartida.podio;
+    final temSalva = game.temPartida;
     return Scaffold(
       body: LanceBackground(
         child: SafeArea(
           child: LayoutBuilder(
             builder: (context, c) {
-              final escalaLogo = (c.maxHeight / 760).clamp(0.7, 1.15);
+              final escalaLogo = (c.maxHeight / 900).clamp(0.6, 0.9);
               return SingleChildScrollView(
                 child: ConstrainedBox(
                   constraints: BoxConstraints(minHeight: c.maxHeight),
@@ -119,8 +116,8 @@ class _MenuScreenState extends State<MenuScreen> with SingleTickerProviderStateM
                                 GlowButton(
                                   texto: 'Continuar Leilão',
                                   icone: LanceIconType.play,
-                                  altura: 66,
-                                  tamanhoTexto: 21,
+                                  altura: 56,
+                                  tamanhoTexto: 19,
                                   onTap: _continuar,
                                 ),
                               ),
@@ -131,8 +128,8 @@ class _MenuScreenState extends State<MenuScreen> with SingleTickerProviderStateM
                               GlowButton(
                                 texto: 'Novo Leilão',
                                 icone: LanceIconType.martelo,
-                                altura: 66,
-                                tamanhoTexto: 22,
+                                altura: 56,
+                                tamanhoTexto: 19,
                                 estilo: temSalva ? EstiloBotao.secundario : EstiloBotao.principal,
                                 onTap: _novoLeilao,
                               ),
@@ -158,14 +155,6 @@ class _MenuScreenState extends State<MenuScreen> with SingleTickerProviderStateM
                               ),
                             ),
                           ],
-                        ),
-                        const SizedBox(height: 24),
-                        _entrada(
-                          4,
-                          Text(
-                            '100% offline  •  sem anúncios',
-                            style: AppText.texto(13, cor: AppColors.lilas.withValues(alpha: 0.55)),
-                          ),
                         ),
                       ],
                     ),

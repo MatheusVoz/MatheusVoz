@@ -49,9 +49,9 @@ class PlayerChip extends StatelessWidget {
             borderRadius: BorderRadius.circular(18),
             color: selecionado
                 ? Color.alphaBlend(cor.withValues(alpha: 0.28), AppColors.superficie)
-                : (ativo ? AppColors.superficieClara : const Color(0xFF16131C)),
+                : (ativo ? AppColors.superficieClara : const Color(0xFF331470)),
             border: Border.all(
-              color: selecionado ? AppColors.branco : cor.withValues(alpha: ativo ? 0.85 : 0.5),
+              color: selecionado ? AppColors.neon : cor.withValues(alpha: ativo ? 0.85 : 0.5),
               width: selecionado ? 3 : 2,
             ),
             boxShadow: selecionado
@@ -71,13 +71,6 @@ class PlayerChip extends StatelessWidget {
               ),
               const SizedBox(width: 8),
               Expanded(child: compacto ? _infoCompacta(cor) : _infoNormal(cor)),
-              // Bolinhas das vagas (cheias = arrematadas).
-              _Vagas(
-                total: tamanhoLista,
-                ocupadas: tamanhoLista - vagasRestantes,
-                cor: cor,
-                compacto: compacto,
-              ),
             ],
           ),
         ),
@@ -148,38 +141,4 @@ class PlayerChip extends StatelessWidget {
       ),
     ],
   );
-}
-
-class _Vagas extends StatelessWidget {
-  final int total, ocupadas;
-  final Color cor;
-  final bool compacto;
-  const _Vagas({required this.total, required this.ocupadas, required this.cor, required this.compacto});
-
-  @override
-  Widget build(BuildContext context) {
-    final d = compacto ? 7.0 : 8.0;
-    final porColuna = (total / 2).ceil();
-    Widget bolinha(int i) => AnimatedContainer(
-      duration: const Duration(milliseconds: 300),
-      width: d,
-      height: d,
-      margin: const EdgeInsets.all(1.6),
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        color: i < ocupadas ? cor : Colors.transparent,
-        border: Border.all(color: cor.withValues(alpha: 0.8), width: 1.4),
-      ),
-    );
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        for (var c = 0; c < 2; c++)
-          Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [for (var i = c * porColuna; i < (c + 1) * porColuna && i < total; i++) bolinha(i)],
-          ),
-      ],
-    );
-  }
 }

@@ -95,7 +95,7 @@ class _Conteudo extends StatelessWidget {
             gradient: const LinearGradient(
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
-              colors: [Color(0xFF2A1450), Color(0xFF150A28), Color(0xFF1E0E3A)],
+              colors: [Color(0xFF6A2DD8), Color(0xFF3F149A), Color(0xFF55209E)],
             ),
             border: Border.all(color: AppColors.neon, width: 2.5),
             boxShadow: [
@@ -122,16 +122,6 @@ class _Conteudo extends StatelessWidget {
                   ),
                 ),
               ),
-              if (c.maxHeight > 150) ...[
-                const SizedBox(height: 6),
-                Text(
-                  tema.toUpperCase(),
-                  style: AppText.texto(
-                    13,
-                    cor: AppColors.lilas.withValues(alpha: 0.8),
-                  ).copyWith(letterSpacing: 2.4),
-                ),
-              ],
             ],
           ),
         );

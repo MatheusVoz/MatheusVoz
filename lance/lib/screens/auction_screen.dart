@@ -287,32 +287,7 @@ class _AuctionScreenState extends State<AuctionScreen> with TickerProviderStateM
               children: [
                 Text(
                   'ITEM $atual DE ${g.totalItens}',
-                  style: AppText.numero(compacto ? 18 : 20).copyWith(shadows: AppText.brilho),
-                ),
-                const SizedBox(height: 4),
-                // Barra de progresso do leilao.
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 24),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(4),
-                    child: TweenAnimationBuilder<double>(
-                      tween: Tween(end: g.totalItens == 0 ? 0 : g.indiceAtual / g.totalItens),
-                      duration: const Duration(milliseconds: 500),
-                      curve: Curves.easeOut,
-                      builder: (_, v, _) => Stack(
-                        children: [
-                          Container(height: 6, color: AppColors.superficieClara),
-                          FractionallySizedBox(
-                            widthFactor: v.clamp(0.0, 1.0),
-                            child: Container(
-                              height: 6,
-                              decoration: const BoxDecoration(gradient: AppColors.gradienteBotao),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
+                  style: AppText.numero(compacto ? 15 : 17).copyWith(shadows: AppText.brilho),
                 ),
               ],
             ),

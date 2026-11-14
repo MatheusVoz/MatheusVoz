@@ -23,8 +23,8 @@ class GlowButton extends StatefulWidget {
     required this.onTap,
     this.icone,
     this.estilo = EstiloBotao.principal,
-    this.altura = 60,
-    this.tamanhoTexto = 20,
+    this.altura = 52,
+    this.tamanhoTexto = 17,
     this.expandir = true,
   });
 
@@ -63,7 +63,7 @@ class _GlowButtonState extends State<GlowButton> {
         color: !_ativo
             ? AppColors.desativado
             : principal
-            ? const Color(0xFFD7B0FF)
+            ? AppColors.branco
             : AppColors.roxo.withValues(alpha: fantasma ? 0.5 : 0.9),
         width: 2,
       ),
@@ -78,7 +78,9 @@ class _GlowButtonState extends State<GlowButton> {
           : null,
     );
 
-    final corTexto = _ativo ? AppColors.branco : AppColors.lilas.withValues(alpha: 0.45);
+    final corTexto = _ativo
+        ? (principal ? AppColors.textoSobreAmarelo : AppColors.branco)
+        : AppColors.lilas.withValues(alpha: 0.45);
     final conteudo = Row(
       mainAxisSize: widget.expandir ? MainAxisSize.max : MainAxisSize.min,
       mainAxisAlignment: MainAxisAlignment.center,
@@ -87,10 +89,8 @@ class _GlowButtonState extends State<GlowButton> {
           LanceIcon(
             widget.icone!,
             tamanho: widget.tamanhoTexto * 1.35,
-            preenchimento: _ativo
-                ? (principal ? const Color(0xFF5A12B0) : AppColors.roxo)
-                : AppColors.desativado,
-            contorno: _ativo ? const Color(0xFFF1E4FF) : AppColors.lilas.withValues(alpha: 0.4),
+            preenchimento: _ativo ? (principal ? AppColors.roxo : AppColors.neon) : AppColors.desativado,
+            contorno: _ativo ? AppColors.roxoEscuro : AppColors.lilas.withValues(alpha: 0.4),
           ),
           const SizedBox(width: 10),
         ],
