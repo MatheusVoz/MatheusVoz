@@ -24,7 +24,7 @@ Future<void> main() async {
 
   final settings = SettingsController();
   await settings.carregar();
-  final game = GameController()..regraReserva = settings.regraReserva;
+  final game = GameController();
   await game.restaurar();
   FeedbackService.instancia.conectar(settings);
 
@@ -41,11 +41,7 @@ class LanceApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider.value(value: settings),
-        // A regra do R$1 por vaga acompanha a configuracao em tempo real.
-        ChangeNotifierProxyProvider<SettingsController, GameController>(
-          create: (_) => game,
-          update: (_, s, g) => g!..regraReserva = s.regraReserva,
-        ),
+        ChangeNotifierProvider.value(value: game),
       ],
       child: MaterialApp(
         title: 'LANCE!',

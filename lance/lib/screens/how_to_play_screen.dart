@@ -19,7 +19,7 @@ class HowToPlayScreen extends StatelessWidget {
     (
       LanceIconType.jogadores,
       'Monte a mesa',
-      'De 2 a 6 jogadores. Cada um recebe o mesmo dinheiro fictício e um número de vagas na lista.',
+      'De 2 a 6 jogadores. Cada um recebe o mesmo dinheiro fictício. Não há limite de itens por pessoa.',
     ),
     (
       LanceIconType.martelo,
@@ -34,13 +34,13 @@ class HowToPlayScreen extends StatelessWidget {
     (
       LanceIconType.moeda,
       'Cuidado com o saldo',
-      'Ninguém pode dar lance acima do que tem. Com a regra do R\$1 por vaga, guarde R\$1 para cada vaga que falta.',
+      'Dê o lance que quiser, até todo o dinheiro que você tem. Só não pode passar do seu saldo.',
     ),
     (LanceIconType.pular, 'Ninguém quis?', 'Pule o item. Errou? Use Desfazer para voltar a última venda.'),
     (
       LanceIconType.lista,
       'Fim do leilão',
-      'Acaba quando todas as listas fecham, o dinheiro acaba ou os itens terminam.',
+      'Acaba quando os itens terminam ou quando ninguém mais tem dinheiro.',
     ),
     (
       LanceIconType.trofeu,

@@ -6,11 +6,9 @@ import '../theme/app_text.dart';
 import 'animated_money.dart';
 import 'pressable.dart';
 
-/// Card de jogador na tela do leilao: nome, saldo e vagas restantes.
+/// Card de jogador na tela do leilao: nome, saldo e quantos itens ja tem.
 class PlayerChip extends StatelessWidget {
   final Player jogador;
-  final int vagasRestantes;
-  final int tamanhoLista;
   final bool selecionado;
   final bool ativo;
   final String? motivoBloqueio;
@@ -20,8 +18,6 @@ class PlayerChip extends StatelessWidget {
   const PlayerChip({
     super.key,
     required this.jogador,
-    required this.vagasRestantes,
-    required this.tamanhoLista,
     required this.selecionado,
     required this.ativo,
     required this.onTap,
@@ -36,7 +32,7 @@ class PlayerChip extends StatelessWidget {
     return Semantics(
       button: true,
       selected: selecionado,
-      label: '${jogador.nome}, saldo ${jogador.saldo} reais, $vagasRestantes vagas',
+      label: '${jogador.nome}, saldo ${jogador.saldo} reais, ${jogador.compras.length} itens',
       child: Pressable(
         onTap: onTap,
         escala: 0.95,
@@ -78,6 +74,12 @@ class PlayerChip extends StatelessWidget {
     );
   }
 
+  /// Quantidade de itens ja arrematados.
+  String get _textoItens {
+    final n = jogador.compras.length;
+    return n == 1 ? '1 item' : '$n itens';
+  }
+
   Widget _nome(double tamanho) => Text(
     jogador.nome,
     maxLines: 1,
@@ -100,13 +102,13 @@ class PlayerChip extends StatelessWidget {
   );
 
   Widget _status(double tamanho) => Text(
-    motivoBloqueio ?? 'Vagas $vagasRestantes/$tamanhoLista',
+    motivoBloqueio ?? _textoItens,
     maxLines: 1,
     overflow: TextOverflow.ellipsis,
     style: AppText.texto(tamanho, cor: ativo ? AppColors.lilas : AppColors.lilas.withValues(alpha: 0.45)),
   );
 
-  /// Tres linhas: nome, saldo grande e vagas.
+  /// Tres linhas: nome, saldo grande e itens.
   Widget _infoNormal(Color cor) => Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     mainAxisAlignment: MainAxisAlignment.center,
@@ -114,7 +116,7 @@ class PlayerChip extends StatelessWidget {
   );
 
   /// Duas linhas (telas menores ou 6 jogadores): nome inteiro em cima,
-  /// saldo e vagas embaixo.
+  /// saldo e itens embaixo.
   Widget _infoCompacta(Color cor) => Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     mainAxisAlignment: MainAxisAlignment.center,
@@ -128,7 +130,7 @@ class PlayerChip extends StatelessWidget {
           Flexible(
             flex: 2,
             child: Text(
-              motivoBloqueio == null ? '$vagasRestantes/$tamanhoLista' : motivoBloqueio!.split(' ').last,
+              motivoBloqueio == null ? _textoItens : 'sem R\$',
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
               style: AppText.texto(

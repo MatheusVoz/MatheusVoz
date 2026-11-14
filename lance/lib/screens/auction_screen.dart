@@ -314,8 +314,6 @@ class _AuctionScreenState extends State<AuctionScreen> with TickerProviderStateM
                       ? PlayerChip(
                           key: ValueKey('chip_${js[k].id}'),
                           jogador: js[k],
-                          vagasRestantes: g.vagasRestantes(js[k]),
-                          tamanhoLista: g.config!.tamanhoLista,
                           selecionado: _selecionado == js[k].id,
                           ativo: g.podeArrematar(js[k]),
                           motivoBloqueio: g.motivoBloqueio(js[k]),

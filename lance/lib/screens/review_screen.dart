@@ -114,7 +114,7 @@ class _ReviewScreenState extends State<ReviewScreen> {
                         if (_pagina.position.haveDimensions) d = ((_pagina.page ?? 0) - i).abs();
                         return Transform.scale(scale: (1 - d * 0.08).clamp(0.85, 1.0), child: c);
                       },
-                      child: _ListaJogador(jogador: js[i], tamanhoLista: g.config!.tamanhoLista),
+                      child: _ListaJogador(jogador: js[i]),
                     ),
                   ),
                 ),
@@ -141,13 +141,11 @@ class _ReviewScreenState extends State<ReviewScreen> {
 
 class _ListaJogador extends StatelessWidget {
   final Player jogador;
-  final int tamanhoLista;
-  const _ListaJogador({required this.jogador, required this.tamanhoLista});
+  const _ListaJogador({required this.jogador});
 
   @override
   Widget build(BuildContext context) {
     final p = jogador;
-    final vazias = tamanhoLista - p.compras.length;
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 6),
       child: Container(
@@ -186,7 +184,15 @@ class _ListaJogador extends StatelessWidget {
                 children: [
                   for (var i = 0; i < p.compras.length; i++)
                     _linhaItem(i + 1, p.compras[i].item, 'R\$${p.compras[i].preco}', p.cor),
-                  for (var i = 0; i < vazias; i++) _linhaVazia(p.compras.length + i + 1),
+                  if (p.compras.isEmpty)
+                    Padding(
+                      padding: const EdgeInsets.only(top: 24),
+                      child: Text(
+                        'Nenhum item arrematado',
+                        textAlign: TextAlign.center,
+                        style: AppText.texto(16, cor: AppColors.lilas.withValues(alpha: 0.7)),
+                      ),
+                    ),
                 ],
               ),
             ),
@@ -242,31 +248,6 @@ class _ListaJogador extends StatelessWidget {
         ),
         const SizedBox(width: 8),
         Text(preco, style: AppText.numero(18, cor: AppColors.lilas)),
-      ],
-    ),
-  );
-
-  Widget _linhaVazia(int n) => Container(
-    margin: const EdgeInsets.only(bottom: 8),
-    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-    decoration: BoxDecoration(
-      borderRadius: BorderRadius.circular(16),
-      border: Border.all(color: AppColors.desativado.withValues(alpha: 0.6)),
-    ),
-    child: Row(
-      children: [
-        Container(
-          width: 30,
-          height: 30,
-          alignment: Alignment.center,
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            border: Border.all(color: AppColors.desativado, width: 1.5),
-          ),
-          child: Text('$n', style: AppText.numero(14, cor: AppColors.desativado)),
-        ),
-        const SizedBox(width: 12),
-        Text('Vaga vazia', style: AppText.texto(16, cor: AppColors.desativado)),
       ],
     ),
   );

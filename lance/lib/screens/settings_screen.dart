@@ -11,7 +11,7 @@ import '../widgets/lance_icon.dart';
 import '../widgets/lance_switch.dart';
 import '../widgets/lance_top_bar.dart';
 
-/// Configuracoes: som, vibracao e regra do R$1 por vaga.
+/// Configuracoes: som e vibracao.
 class SettingsScreen extends StatelessWidget {
   const SettingsScreen({super.key});
 
@@ -47,13 +47,6 @@ class SettingsScreen extends StatelessWidget {
                         s.vibracao = v;
                         if (v) FeedbackService.instancia.vibrarForte();
                       },
-                    ),
-                    _Opcao(
-                      icone: LanceIconType.moeda,
-                      titulo: 'Regra do R\$1 por vaga',
-                      descricao: 'O jogador precisa guardar no mínimo R\$1 para cada vaga que ainda falta preencher.',
-                      valor: s.regraReserva,
-                      onChanged: (v) => s.regraReserva = v,
                     ),
                     const SizedBox(height: 18),
                     LanceCard(

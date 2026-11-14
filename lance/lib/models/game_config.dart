@@ -17,9 +17,6 @@ class GameConfig {
   /// Dinheiro inicial de cada jogador.
   final int dinheiroInicial;
 
-  /// Quantos itens cada jogador pode arrematar.
-  final int tamanhoLista;
-
   /// Quantos itens vao a leilao.
   final int quantidadeItens;
 
@@ -29,24 +26,20 @@ class GameConfig {
     required this.itensPersonalizados,
     required this.jogadores,
     required this.dinheiroInicial,
-    required this.tamanhoLista,
     required this.quantidadeItens,
   });
 
   /// Opcoes oferecidas na tela de configuracao.
   static const opcoesJogadores = [2, 4, 6];
   static const opcoesDinheiro = [20, 30, 50];
-  static const opcoesLista = [3, 4, 5, 6];
 
-  /// Itens extras somados ao minimo no valor padrao.
-  static const extrasPadrao = 4;
+  /// Nao ha limite de itens por jogador: cada um arremata quantos conseguir pagar.
+  /// Minimo de itens no leilao: 2 por jogador.
+  static int minimoItens(int jogadores) => jogadores * 2;
 
-  /// Minimo de itens: cada jogador precisa conseguir completar a lista.
-  static int minimoItens(int jogadores, int lista) => jogadores * lista;
-
-  /// Valor padrao sugerido de itens no leilao.
-  static int padraoItens(int jogadores, int lista, int disponiveis) {
-    final p = minimoItens(jogadores, lista) + extrasPadrao;
+  /// Valor padrao sugerido de itens no leilao (4 por jogador + 4 extras).
+  static int padraoItens(int jogadores, int disponiveis) {
+    final p = jogadores * 4 + 4;
     return p > disponiveis ? disponiveis : p;
   }
 
@@ -56,7 +49,6 @@ class GameConfig {
     'itensPersonalizados': itensPersonalizados,
     'jogadores': jogadores.map((j) => j.toJson()).toList(),
     'dinheiroInicial': dinheiroInicial,
-    'tamanhoLista': tamanhoLista,
     'quantidadeItens': quantidadeItens,
   };
 
@@ -68,7 +60,6 @@ class GameConfig {
         .map((e) => PlayerSetup.fromJson(Map<String, dynamic>.from(e as Map)))
         .toList(),
     dinheiroInicial: j['dinheiroInicial'] as int,
-    tamanhoLista: j['tamanhoLista'] as int,
     quantidadeItens: j['quantidadeItens'] as int,
   );
 }

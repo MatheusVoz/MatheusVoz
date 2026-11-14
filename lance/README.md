@@ -39,12 +39,12 @@ Para um tema novo, copie um bloco `ThemeCategory`, troque `id`, `nome`, `descric
 
 ## Regras implementadas
 
-- 2, 4 ou 6 jogadores; R$20, R$30 ou R$50; lista de 3 a 6 itens.
-- Itens no leilão: padrão = jogadores × lista + 4; mínimo = jogadores × lista; ordem aleatória.
-- Lance mínimo R$1, nunca acima do saldo.
-- Regra opcional (ligada por padrão): guardar R$1 para cada vaga que ainda falta.
-- Jogador com lista completa ou sem dinheiro fica desativado (cinza).
-- Fim: todas as listas fechadas, todos sem dinheiro, ou acabaram os itens.
+- 2, 4 ou 6 jogadores; R$20, R$30 ou R$50.
+- Itens no leilão: padrão = jogadores × 4 + 4; mínimo = jogadores × 2; ordem aleatória.
+- Lance livre: de R$1 até todo o saldo do jogador.
+- Sem limite de itens por jogador: cada um arremata quantos conseguir pagar.
+- Jogador sem dinheiro fica desativado (cinza).
+- Fim: acabaram os itens ou ninguém mais tem dinheiro.
 - Desfazer volta a última venda (ou pulo) e devolve o dinheiro.
 - A partida em andamento é salva a cada ação e pode ser retomada pelo menu.
 
@@ -55,7 +55,7 @@ flutter test
 ```
 
 - `test/game_controller_test.dart`: regras, validações, desfazer, salvamento e simulações aleatórias de
-  todas as combinações (2/4/6 jogadores × R$20/30/50 × listas 3–6, com e sem a regra do R$1).
+  todas as combinações (2/4/6 jogadores × R$20/30/50).
 - `test/fluxo_test.dart`: joga partidas completas pela interface (menu → tema → configuração → leilão →
   encerrado → revisão → juiz → pódio → jogar de novo) para 2/4/6 jogadores × R$20/30/50 em três tamanhos de
   tela (360×640, 393×851, 430×932), com as fontes reais, falhando em qualquer estouro de layout.

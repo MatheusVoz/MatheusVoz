@@ -4,7 +4,7 @@ import 'package:material_ui/material_ui.dart';
 
 import '../theme/app_colors.dart';
 
-/// Fundo padrao: preto profundo com gradiente e brilhos roxos que flutuam devagar.
+/// Fundo padrao: roxo com gradiente e brilhos que flutuam devagar.
 class LanceBackground extends StatefulWidget {
   final Widget child;
   final bool animado;

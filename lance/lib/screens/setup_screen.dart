@@ -31,7 +31,6 @@ class _SetupScreenState extends State<SetupScreen> {
 
   int _jogadores = 4;
   int _dinheiro = 30;
-  int _lista = 4;
   late int _qtdItens;
 
   final _nomes = List.generate(_maxJogadores, (_) => TextEditingController());
@@ -47,8 +46,7 @@ class _SetupScreenState extends State<SetupScreen> {
     if (!_jogadoresValido(_jogadores)) {
       _jogadores = GameConfig.opcoesJogadores.lastWhere(_jogadoresValido, orElse: () => 2);
     }
-    _ajustarLista();
-    _qtdItens = GameConfig.padraoItens(_jogadores, _lista, _disponiveis);
+    _qtdItens = GameConfig.padraoItens(_jogadores, _disponiveis);
   }
 
   @override
@@ -59,19 +57,12 @@ class _SetupScreenState extends State<SetupScreen> {
     super.dispose();
   }
 
-  bool _jogadoresValido(int j) => j * GameConfig.opcoesLista.first <= _disponiveis;
-  bool _listaValida(int l) => _jogadores * l <= _disponiveis;
+  bool _jogadoresValido(int j) => GameConfig.minimoItens(j) <= _disponiveis;
 
-  void _ajustarLista() {
-    if (!_listaValida(_lista)) {
-      _lista = GameConfig.opcoesLista.lastWhere(_listaValida, orElse: () => 3);
-    }
-  }
-
-  int get _minItens => GameConfig.minimoItens(_jogadores, _lista);
+  int get _minItens => GameConfig.minimoItens(_jogadores);
 
   void _recalcularItens() {
-    _qtdItens = GameConfig.padraoItens(_jogadores, _lista, _disponiveis);
+    _qtdItens = GameConfig.padraoItens(_jogadores, _disponiveis);
   }
 
   void _escolherCor(int jogador, int cor) {
@@ -98,7 +89,6 @@ class _SetupScreenState extends State<SetupScreen> {
           ),
       ],
       dinheiroInicial: _dinheiro,
-      tamanhoLista: _lista,
       quantidadeItens: _qtdItens.clamp(_minItens, _disponiveis),
     );
     context.read<GameController>().iniciar(config, widget.tema);
@@ -128,7 +118,6 @@ class _SetupScreenState extends State<SetupScreen> {
                       altura: 52,
                       onChanged: (v) => setState(() {
                         _jogadores = v;
-                        _ajustarLista();
                         _recalcularItens();
                       }),
                     ),
@@ -143,19 +132,6 @@ class _SetupScreenState extends State<SetupScreen> {
                       rotulo: (v) => 'R\$$v',
                       prefixoChave: 'dinheiro',
                       onChanged: (v) => setState(() => _dinheiro = v),
-                    ),
-                    const SizedBox(height: 18),
-                    const SectionTitle('Itens por jogador'),
-                    OptionSelector<int>(
-                      opcoes: GameConfig.opcoesLista,
-                      selecionado: _lista,
-                      rotulo: (v) => '$v',
-                      prefixoChave: 'lista',
-                      habilitado: _listaValida,
-                      onChanged: (v) => setState(() {
-                        _lista = v;
-                        _recalcularItens();
-                      }),
                     ),
                     const SizedBox(height: 18),
                     const SectionTitle('Itens no leilão'),

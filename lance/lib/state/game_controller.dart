@@ -16,7 +16,7 @@ import '../theme/app_colors.dart';
 enum FasePartida { leilao, revisao, juiz, podio }
 
 /// Motivo pelo qual o leilao terminou.
-enum MotivoFim { listasCompletas, semDinheiro, semItens, ninguemPodeComprar }
+enum MotivoFim { semDinheiro, semItens }
 
 /// Uma acao registrada no historico (para o botao Desfazer).
 class AcaoLeilao {
@@ -48,9 +48,6 @@ class ResultadoVenda {
 /// Controla toda a regra do leilao.
 class GameController extends ChangeNotifier {
   static const _chaveSalvamento = 'partida_atual_v1';
-
-  /// Regra do R$1 por vaga (sincronizada com as configuracoes).
-  bool regraReserva = true;
 
   /// Desliga a gravacao em disco (usado em testes de regra puros).
   bool persistir = true;
@@ -102,29 +99,15 @@ class GameController extends ChangeNotifier {
   // Regras
   // -------------------------------------------------------------
 
-  /// Vagas que ainda faltam na lista do jogador.
-  int vagasRestantes(Player p) => _config!.tamanhoLista - p.compras.length;
+  /// Maior lance permitido: todo o dinheiro que o jogador tem.
+  /// Nao ha limite de itens por jogador nem reserva por vaga.
+  int lanceMaximo(Player p) => max(0, p.saldo);
 
-  /// Maior lance permitido para o jogador agora.
-  /// Com a regra de reserva, ele precisa manter R$1 para cada vaga
-  /// que ainda faltara preencher depois deste item.
-  int lanceMaximo(Player p) {
-    final vagas = vagasRestantes(p);
-    if (vagas <= 0) return 0;
-    final reserva = regraReserva ? vagas - 1 : 0;
-    return max(0, p.saldo - reserva);
-  }
-
-  /// Jogador pode arrematar o item atual?
-  bool podeArrematar(Player p) => vagasRestantes(p) > 0 && lanceMaximo(p) >= 1;
+  /// Jogador pode arrematar o item atual? (precisa ter pelo menos R$1)
+  bool podeArrematar(Player p) => p.saldo >= 1;
 
   /// Texto curto explicando por que o jogador esta desativado.
-  String? motivoBloqueio(Player p) {
-    if (vagasRestantes(p) <= 0) return 'Lista completa';
-    if (p.saldo <= 0) return 'Sem dinheiro';
-    if (lanceMaximo(p) < 1) return 'Sem saldo livre';
-    return null;
-  }
+  String? motivoBloqueio(Player p) => p.saldo <= 0 ? 'Sem dinheiro' : null;
 
   /// O leilao ja terminou?
   bool get leilaoEncerrado => motivoFim != null;
@@ -132,20 +115,14 @@ class GameController extends ChangeNotifier {
   /// Motivo do fim (null = leilao continua).
   MotivoFim? get motivoFim {
     if (_config == null) return null;
-    final completos = _jogadores.every((p) => vagasRestantes(p) <= 0);
-    if (completos) return MotivoFim.listasCompletas;
-    final ativos = _jogadores.where((p) => vagasRestantes(p) > 0);
-    if (ativos.every((p) => p.saldo <= 0)) return MotivoFim.semDinheiro;
+    if (!_jogadores.any(podeArrematar)) return MotivoFim.semDinheiro;
     if (_indice >= _itens.length) return MotivoFim.semItens;
-    if (!_jogadores.any(podeArrematar)) return MotivoFim.ninguemPodeComprar;
     return null;
   }
 
   String get textoMotivoFim => switch (motivoFim) {
-    MotivoFim.listasCompletas => 'Todas as listas foram fechadas',
     MotivoFim.semDinheiro => 'Todos ficaram sem dinheiro',
     MotivoFim.semItens => 'Acabaram os itens',
-    MotivoFim.ninguemPodeComprar => 'Ninguém pode mais arrematar',
     null => '',
   };
 
@@ -189,16 +166,9 @@ class GameController extends ChangeNotifier {
       return const ResultadoVenda.falha('O leilão já terminou.');
     }
     final p = jogador(jogadorId);
-    if (vagasRestantes(p) <= 0) {
-      return ResultadoVenda.falha('${p.nome} já completou a lista.');
-    }
     if (valor < 1) return const ResultadoVenda.falha('O lance mínimo é R\$1.');
     if (valor > p.saldo) {
       return ResultadoVenda.falha('${p.nome} só tem R\$${p.saldo}.');
-    }
-    final maximo = lanceMaximo(p);
-    if (valor > maximo) {
-      return ResultadoVenda.falha('${p.nome} precisa guardar R\$1 por vaga. Lance máximo: R\$$maximo.');
     }
     p.saldo -= valor;
     p.compras.add(Purchase(item: itemAtual!, preco: valor, indiceItem: _indice));
