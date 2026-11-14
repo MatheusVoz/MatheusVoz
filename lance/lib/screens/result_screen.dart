@@ -17,8 +17,8 @@ import 'auction_screen.dart';
 import 'review_screen.dart';
 import 'theme_select_screen.dart';
 
-/// Resultado: tabela de classificacao. O juiz da pontos para cada jogador
-/// e a tabela se reordena sozinha (quem tem mais pontos fica no topo).
+/// Resultado: podio animado com confete em cima e, embaixo, a lista em que o
+/// juiz da pontos. O podio se atualiza ao vivo (mais pontos = mais alto).
 class ResultScreen extends StatefulWidget {
   const ResultScreen({super.key});
 
@@ -27,7 +27,7 @@ class ResultScreen extends StatefulWidget {
 }
 
 class _ResultScreenState extends State<ResultScreen> {
-  static const _alturaLinha = 66.0;
+  static const _alturaLinha = 54.0;
 
   /// Muda a chave para disparar uma nova chuva de confete.
   int _confetes = 0;
@@ -36,9 +36,11 @@ class _ResultScreenState extends State<ResultScreen> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+    // Fanfarra e confete assim que a tela abre.
+    Future.delayed(const Duration(milliseconds: 700), () {
       if (!mounted) return;
       FeedbackService.instancia.tocar(Som.fanfarra);
+      FeedbackService.instancia.vibrarForte();
       setState(() => _confetes++);
     });
   }
@@ -46,7 +48,7 @@ class _ResultScreenState extends State<ResultScreen> {
   void _pontuar(GameController g, Player p, int delta) {
     g.darPonto(p.id, delta);
     final topo = g.classificacao.first;
-    // Novo lider com pontos: comemora.
+    // Novo lider com pontos: mais confete.
     if (g.pontos(topo.id) > 0 && topo.id != _lider) {
       _lider = topo.id;
       FeedbackService.instancia.tocar(Som.moeda);
@@ -95,83 +97,74 @@ class _ResultScreenState extends State<ResultScreen> {
               SafeArea(
                 child: Column(
                   children: [
-                    LanceTopBar(titulo: 'Resultado', onVoltar: () => _voltarRevisao(g)),
-                    Text('Juiz: dê pontos para cada lista', style: AppText.texto(14)),
-                    const SizedBox(height: 10),
+                    LanceTopBar(titulo: 'Pódio', onVoltar: () => _voltarRevisao(g)),
                     Expanded(
                       child: SingleChildScrollView(
-                        padding: const EdgeInsets.symmetric(horizontal: 14),
-                        child: SizedBox(
-                          height: lista.length * _alturaLinha,
-                          child: Stack(
-                            children: [
-                              // Cada linha desliza ate a sua posicao quando a ordem muda.
-                              for (final p in g.jogadores)
-                                AnimatedPositioned(
-                                  key: ValueKey('linha_${p.id}'),
-                                  duration: const Duration(milliseconds: 450),
-                                  curve: Curves.easeOutBack,
-                                  left: 0,
-                                  right: 0,
-                                  top: lista.indexOf(p) * _alturaLinha,
-                                  height: _alturaLinha - 8,
-                                  child: _Linha(
-                                    jogador: p,
-                                    posicao: 1 + lista.where((o) => g.pontos(o.id) > g.pontos(p.id)).length,
-                                    pontos: g.pontos(p.id),
-                                    lider: lista.first.id == p.id && g.pontos(p.id) > 0,
-                                    onMais: () => _pontuar(g, p, 1),
-                                    onMenos: () => _pontuar(g, p, -1),
-                                  ),
-                                ),
-                            ],
-                          ),
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        child: Column(
+                          children: [
+                            _Podio(classificacao: lista, pontos: g.pontos),
+                            const SizedBox(height: 14),
+                            Text(
+                              'Juiz: toque em + para dar pontos',
+                              style: AppText.texto(13, cor: AppColors.lilas.withValues(alpha: 0.75)),
+                            ),
+                            const SizedBox(height: 8),
+                            SizedBox(
+                              height: lista.length * _alturaLinha,
+                              child: Stack(
+                                children: [
+                                  // Cada linha desliza ate a nova posicao quando a ordem muda.
+                                  for (final p in g.jogadores)
+                                    AnimatedPositioned(
+                                      key: ValueKey('linha_${p.id}'),
+                                      duration: const Duration(milliseconds: 420),
+                                      curve: Curves.easeOutBack,
+                                      left: 0,
+                                      right: 0,
+                                      top: lista.indexOf(p) * _alturaLinha,
+                                      height: _alturaLinha - 8,
+                                      child: _Linha(
+                                        jogador: p,
+                                        posicao:
+                                            1 + lista.where((o) => g.pontos(o.id) > g.pontos(p.id)).length,
+                                        pontos: g.pontos(p.id),
+                                        onMais: () => _pontuar(g, p, 1),
+                                        onMenos: () => _pontuar(g, p, -1),
+                                      ),
+                                    ),
+                                ],
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     ),
                     Padding(
-                      padding: const EdgeInsets.fromLTRB(14, 6, 14, 12),
-                      child: Column(
+                      padding: const EdgeInsets.fromLTRB(16, 6, 16, 12),
+                      child: Row(
                         children: [
-                          GlowButton(
-                            texto: 'Jogar de novo',
-                            icone: LanceIconType.play,
-                            altura: 52,
-                            tamanhoTexto: 18,
-                            onTap: _denovo,
+                          Expanded(
+                            flex: 3,
+                            child: GlowButton(
+                              texto: 'Jogar de novo',
+                              icone: LanceIconType.play,
+                              altura: 48,
+                              tamanhoTexto: 16,
+                              onTap: _denovo,
+                            ),
                           ),
-                          const SizedBox(height: 8),
-                          Row(
-                            children: [
-                              Expanded(
-                                child: GlowButton(
-                                  texto: 'Novo leilão',
-                                  estilo: EstiloBotao.secundario,
-                                  altura: 46,
-                                  tamanhoTexto: 15,
-                                  onTap: _novo,
-                                ),
-                              ),
-                              const SizedBox(width: 8),
-                              Expanded(
-                                child: GlowButton(
-                                  texto: 'Menu',
-                                  estilo: EstiloBotao.secundario,
-                                  altura: 46,
-                                  tamanhoTexto: 15,
-                                  onTap: _menu,
-                                ),
-                              ),
-                            ],
-                          ),
+                          const SizedBox(width: 8),
+                          BotaoIcone(icone: LanceIconType.martelo, rotulo: 'Novo leilão', onTap: _novo),
+                          const SizedBox(width: 8),
+                          BotaoIcone(icone: LanceIconType.voltar, rotulo: 'Menu', onTap: _menu),
                         ],
                       ),
                     ),
                   ],
                 ),
               ),
-              if (_confetes > 0)
-                Positioned.fill(child: ConfettiRain(key: ValueKey(_confetes), quantidade: 90)),
+              if (_confetes > 0) Positioned.fill(child: ConfettiRain(key: ValueKey(_confetes))),
             ],
           ),
         ),
@@ -180,12 +173,149 @@ class _ResultScreenState extends State<ResultScreen> {
   }
 }
 
-/// Uma linha da tabela: posicao, nome, itens e controle de pontos.
+/// Podio com 2o - 1o - 3o. Os blocos crescem ao abrir a tela e os jogadores
+/// trocam de lugar com animacao quando a pontuacao muda.
+class _Podio extends StatelessWidget {
+  final List<Player> classificacao;
+  final int Function(int id) pontos;
+  const _Podio({required this.classificacao, required this.pontos});
+
+  @override
+  Widget build(BuildContext context) {
+    final n = classificacao.length;
+    final ordem = <int>[if (n > 1) 1, 0, if (n > 2) 2];
+    const alturas = {0: 120.0, 1: 86.0, 2: 62.0};
+    return TweenAnimationBuilder<double>(
+      tween: Tween(begin: 0, end: 1),
+      duration: const Duration(milliseconds: 1400),
+      curve: Curves.easeOutCubic,
+      builder: (context, t, _) => SizedBox(
+        height: 250,
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            for (final pos in ordem)
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 5),
+                  child: _Coluna(
+                    posicao: pos,
+                    jogador: classificacao[pos],
+                    pontos: pontos(classificacao[pos].id),
+                    alturaBloco: alturas[pos]! * Curves.easeOutBack.transform(t),
+                    entrada: t,
+                  ),
+                ),
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _Coluna extends StatelessWidget {
+  final int posicao;
+  final Player jogador;
+  final int pontos;
+  final double alturaBloco;
+  final double entrada;
+
+  const _Coluna({
+    required this.posicao,
+    required this.jogador,
+    required this.pontos,
+    required this.alturaBloco,
+    required this.entrada,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final campeao = posicao == 0;
+    final p = jogador;
+    final coroa = campeao ? Curves.elasticOut.transform(((entrada - 0.5) / 0.5).clamp(0.0, 1.0)) : 0.0;
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.end,
+      children: [
+        if (campeao)
+          Transform.scale(
+            scale: coroa,
+            child: const Padding(
+              padding: EdgeInsets.only(bottom: 4),
+              child: LanceIcon(LanceIconType.coroa, tamanho: 44),
+            ),
+          ),
+        // Nome e pontos trocam com animacao quando outro jogador assume a posicao.
+        AnimatedSwitcher(
+          duration: const Duration(milliseconds: 350),
+          transitionBuilder: (c, a) => ScaleTransition(
+            scale: a,
+            child: FadeTransition(opacity: a, child: c),
+          ),
+          child: Column(
+            key: ValueKey('${p.id}_$pontos'),
+            children: [
+              Container(
+                width: campeao ? 14 : 11,
+                height: campeao ? 14 : 11,
+                decoration: BoxDecoration(shape: BoxShape.circle, color: p.cor),
+              ),
+              const SizedBox(height: 4),
+              Text(
+                p.nome,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                textAlign: TextAlign.center,
+                style: AppText.texto(campeao ? 16 : 14, cor: AppColors.branco, peso: FontWeight.w700),
+              ),
+              Text(
+                pontos == 1 ? '1 ponto' : '$pontos pontos',
+                style: AppText.texto(12, cor: AppColors.lilas.withValues(alpha: 0.75)),
+              ),
+              const SizedBox(height: 6),
+            ],
+          ),
+        ),
+        Container(
+          height: alturaBloco.clamp(0.0, 200.0),
+          width: double.infinity,
+          alignment: Alignment.topCenter,
+          decoration: BoxDecoration(
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(14)),
+            gradient: campeao
+                ? AppColors.gradienteBotao
+                : LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [AppColors.superficieClara, AppColors.superficie],
+                  ),
+            boxShadow: campeao
+                ? [BoxShadow(color: AppColors.neon.withValues(alpha: 0.45), blurRadius: 22)]
+                : null,
+          ),
+          child: alturaBloco > 40
+              ? Padding(
+                  padding: const EdgeInsets.only(top: 8),
+                  child: Text(
+                    '${posicao + 1}º',
+                    style: AppText.numero(
+                      campeao ? 30 : 24,
+                      cor: campeao ? AppColors.textoSobreAmarelo : AppColors.branco,
+                    ),
+                  ),
+                )
+              : null,
+        ),
+      ],
+    );
+  }
+}
+
+/// Linha minimalista: posicao, cor, nome e controle de pontos.
 class _Linha extends StatelessWidget {
   final Player jogador;
   final int posicao;
   final int pontos;
-  final bool lider;
   final VoidCallback onMais;
   final VoidCallback onMenos;
 
@@ -193,7 +323,6 @@ class _Linha extends StatelessWidget {
     required this.jogador,
     required this.posicao,
     required this.pontos,
-    required this.lider,
     required this.onMais,
     required this.onMenos,
   });
@@ -201,67 +330,40 @@ class _Linha extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final p = jogador;
-    return AnimatedContainer(
-      duration: const Duration(milliseconds: 300),
-      padding: const EdgeInsets.fromLTRB(8, 6, 6, 6),
+    return Container(
+      padding: const EdgeInsets.fromLTRB(12, 4, 4, 4),
       decoration: BoxDecoration(
-        color: lider ? const Color(0xFF5B27B8) : AppColors.superficie,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: lider ? AppColors.neon : p.cor.withValues(alpha: 0.6),
-          width: lider ? 2.5 : 1.5,
-        ),
-        boxShadow: lider ? [BoxShadow(color: AppColors.neon.withValues(alpha: 0.5), blurRadius: 16)] : null,
+        color: AppColors.superficie.withValues(alpha: 0.7),
+        borderRadius: BorderRadius.circular(14),
       ),
       child: Row(
         children: [
-          // Posicao (coroa para o lider).
           SizedBox(
-            width: 40,
-            child: Center(
-              child: lider
-                  ? const LanceIcon(LanceIconType.coroa, tamanho: 32)
-                  : Text('$posicaoº', style: AppText.numero(17, cor: AppColors.lilas)),
-            ),
+            width: 30,
+            child: Text('$posicaoº', style: AppText.numero(14, cor: AppColors.lilas.withValues(alpha: 0.8))),
           ),
           Container(
-            width: 5,
-            height: 30,
-            decoration: BoxDecoration(color: p.cor, borderRadius: BorderRadius.circular(3)),
+            width: 10,
+            height: 10,
+            decoration: BoxDecoration(shape: BoxShape.circle, color: p.cor),
           ),
-          const SizedBox(width: 8),
+          const SizedBox(width: 10),
           Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  p.nome,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: AppText.texto(16, cor: AppColors.branco, peso: FontWeight.w700),
-                ),
-                Text(
-                  p.compras.isEmpty ? 'Nenhum item' : p.compras.map((c) => c.item).join(', '),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: AppText.texto(12, cor: AppColors.lilas.withValues(alpha: 0.8)),
-                ),
-              ],
+            child: Text(
+              p.nome,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: AppText.texto(15, cor: AppColors.branco, peso: FontWeight.w700),
             ),
           ),
-          _BotaoPonto(rotulo: '-', onTap: pontos > 0 ? onMenos : null, chave: 'menos_${p.id}'),
+          _BotaoPonto(mais: false, onTap: pontos > 0 ? onMenos : null, chave: 'menos_${p.id}'),
           SizedBox(
-            width: 42,
+            width: 36,
             child: Center(
-              child: Text(
-                '$pontos',
-                key: ValueKey('pontos_${p.id}'),
-                style: AppText.numero(20, cor: lider ? AppColors.neon : AppColors.branco),
-              ),
+              child: Text('$pontos', key: ValueKey('pontos_${p.id}'), style: AppText.numero(17)),
             ),
           ),
-          _BotaoPonto(rotulo: '+', onTap: onMais, chave: 'mais_${p.id}'),
+          _BotaoPonto(mais: true, onTap: onMais, chave: 'mais_${p.id}'),
         ],
       ),
     );
@@ -269,14 +371,13 @@ class _Linha extends StatelessWidget {
 }
 
 class _BotaoPonto extends StatelessWidget {
-  final String rotulo;
+  final bool mais;
   final VoidCallback? onTap;
   final String chave;
-  const _BotaoPonto({required this.rotulo, required this.onTap, required this.chave});
+  const _BotaoPonto({required this.mais, required this.onTap, required this.chave});
 
   @override
   Widget build(BuildContext context) {
-    final mais = rotulo == '+';
     return Semantics(
       key: ValueKey(chave),
       button: true,
@@ -286,20 +387,18 @@ class _BotaoPonto extends StatelessWidget {
         escala: 0.85,
         child: AnimatedOpacity(
           duration: const Duration(milliseconds: 150),
-          opacity: onTap == null ? 0.35 : 1,
+          opacity: onTap == null ? 0.3 : 1,
           child: Container(
-            width: 38,
-            height: 38,
+            width: 36,
+            height: 36,
             alignment: Alignment.center,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              gradient: mais ? AppColors.gradienteBotao : null,
-              color: mais ? null : AppColors.superficieClara,
-              border: Border.all(color: mais ? AppColors.branco : AppColors.roxo, width: 1.5),
+              color: mais ? AppColors.neon : AppColors.superficieClara,
             ),
             child: LanceIcon(
               mais ? LanceIconType.mais : LanceIconType.menos,
-              tamanho: 18,
+              tamanho: 16,
               preenchimento: mais ? AppColors.roxoEscuro : AppColors.branco,
               contorno: mais ? AppColors.roxoEscuro : AppColors.branco,
             ),

@@ -146,7 +146,7 @@ Future<void> jogarPartida(
 
   await tocar(t, find.text('Chamar o Juiz'));
   await esperar(t, 1000);
-  expect(find.text('Resultado'), findsOneWidget);
+  expect(find.text('Pódio'), findsOneWidget);
   expect(game.fase, FasePartida.juiz);
   // O juiz da 2 pontos ao ultimo jogador: ele sobe para o topo da tabela.
   final ultimo = game.jogadores.last;
@@ -160,7 +160,7 @@ Future<void> jogarPartida(
   await tocar(t, find.byKey(ValueKey('mais_${game.jogadores.first.id}')));
   await esperar(t, 900);
   expect(game.ranking[1], game.jogadores.first.id);
-  if (capturas) await capturar(t, '09_resultado_$tela');
+  if (capturas) await capturar(t, '09_podio_$tela');
 
   // Jogar de novo com as mesmas configuracoes.
   await tocar(t, find.text('Jogar de novo'));

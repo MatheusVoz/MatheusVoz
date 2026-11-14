@@ -57,7 +57,7 @@ flutter test
 - `test/game_controller_test.dart`: regras, validações, desfazer, salvamento e simulações aleatórias de
   todas as combinações (2/4/6 jogadores × R$20/30/50).
 - `test/fluxo_test.dart`: joga partidas completas pela interface (menu → tema → configuração → leilão →
-  encerrado → revisão → juiz → pódio → jogar de novo) para 2/4/6 jogadores × R$20/30/50 em três tamanhos de
+  encerrado → revisão → pódio → jogar de novo) para 2/4/6 jogadores × R$20/30/50 em três tamanhos de
   tela (360×640, 393×851, 430×932), com as fontes reais, falhando em qualquer estouro de layout.
   Para gerar capturas: `CAPTURAS=1 flutter test test/fluxo_test.dart --plain-name "capturas de tela" --update-goldens`.
 
