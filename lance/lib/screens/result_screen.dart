@@ -106,7 +106,7 @@ class _ResultScreenState extends State<ResultScreen> {
                             _Podio(classificacao: lista, pontos: g.pontos),
                             const SizedBox(height: 14),
                             Text(
-                              'Juiz: toque em + para dar pontos',
+                              '1 ponto por item. Juiz: use + e − para ajustar',
                               style: AppText.texto(13, cor: AppColors.lilas.withValues(alpha: 0.75)),
                             ),
                             const SizedBox(height: 8),
@@ -126,8 +126,7 @@ class _ResultScreenState extends State<ResultScreen> {
                                       height: _alturaLinha - 8,
                                       child: _Linha(
                                         jogador: p,
-                                        posicao:
-                                            1 + lista.where((o) => g.pontos(o.id) > g.pontos(p.id)).length,
+                                        posicao: lista.indexOf(p) + 1,
                                         pontos: g.pontos(p.id),
                                         onMais: () => _pontuar(g, p, 1),
                                         onMenos: () => _pontuar(g, p, -1),
@@ -289,9 +288,7 @@ class _Coluna extends StatelessWidget {
                     end: Alignment.bottomCenter,
                     colors: [AppColors.superficieClara, AppColors.superficie],
                   ),
-            boxShadow: campeao
-                ? [BoxShadow(color: AppColors.neon.withValues(alpha: 0.45), blurRadius: 22)]
-                : null,
+            boxShadow: campeao ? [BoxShadow(color: AppColors.neon.withValues(alpha: 0.45), blurRadius: 22)] : null,
           ),
           child: alturaBloco > 40
               ? Padding(
@@ -392,10 +389,7 @@ class _BotaoPonto extends StatelessWidget {
             width: 36,
             height: 36,
             alignment: Alignment.center,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: mais ? AppColors.neon : AppColors.superficieClara,
-            ),
+            decoration: BoxDecoration(shape: BoxShape.circle, color: mais ? AppColors.neon : AppColors.superficieClara),
             child: LanceIcon(
               mais ? LanceIconType.mais : LanceIconType.menos,
               tamanho: 16,

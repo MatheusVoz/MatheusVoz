@@ -62,7 +62,8 @@ class GameController extends ChangeNotifier {
   FasePartida _fase = FasePartida.leilao;
   List<int> _ranking = [];
 
-  /// Pontos dados pelo juiz a cada jogador (id -> pontos).
+  /// Ajuste do juiz sobre os pontos de cada jogador (id -> +/- pontos).
+  /// Os pontos comecam com 1 por item comprado.
   final Map<int, int> _pontos = {};
 
   GameConfig? get config => _config;
@@ -72,8 +73,11 @@ class GameController extends ChangeNotifier {
   FasePartida get fase => _fase;
   List<int> get ranking => List.unmodifiable(_ranking);
 
-  /// Pontos atuais do jogador.
-  int pontos(int id) => _pontos[id] ?? 0;
+  /// Pontos atuais do jogador: 1 por item comprado + ajuste do juiz.
+  int pontos(int id) {
+    final base = _jogadores.where((j) => j.id == id).firstOrNull?.compras.length ?? 0;
+    return (base + (_pontos[id] ?? 0)).clamp(0, 99).toInt();
+  }
 
   /// Jogadores ordenados do 1o ao ultimo (mais pontos primeiro).
   List<Player> get classificacao => _ranking.map(jogador).toList();
@@ -248,17 +252,21 @@ class GameController extends ChangeNotifier {
 
   /// O juiz da ou tira pontos de um jogador (entre 0 e 99).
   void darPonto(int id, int delta) {
-    _pontos[id] = (pontos(id) + delta).clamp(0, 99);
+    final novo = (pontos(id) + delta).clamp(0, 99).toInt();
+    _pontos[id] = novo - jogador(id).compras.length;
     _reordenar();
     _mudou();
   }
 
-  /// Ordena por pontos (maior primeiro); empate mantem a ordem dos jogadores.
+  /// Ordena por pontos (maior primeiro). Empate: quem sobrou com mais
+  /// dinheiro fica na frente; depois, a ordem dos jogadores.
   void _reordenar() {
     final ids = _jogadores.map((j) => j.id).toList();
     ids.sort((a, b) {
       final d = pontos(b).compareTo(pontos(a));
-      return d != 0 ? d : a.compareTo(b);
+      if (d != 0) return d;
+      final s = jogador(b).saldo.compareTo(jogador(a).saldo);
+      return s != 0 ? s : a.compareTo(b);
     });
     _ranking = ids;
   }
@@ -304,9 +312,7 @@ class GameController extends ChangeNotifier {
     _config = GameConfig.fromJson(Map<String, dynamic>.from(j['config'] as Map));
     _itens = List<String>.from(j['itens'] as List);
     _indice = j['indice'] as int;
-    _jogadores = (j['jogadores'] as List)
-        .map((e) => Player.fromJson(Map<String, dynamic>.from(e as Map)))
-        .toList();
+    _jogadores = (j['jogadores'] as List).map((e) => Player.fromJson(Map<String, dynamic>.from(e as Map))).toList();
     _historico
       ..clear()
       ..addAll((j['historico'] as List).map((e) => AcaoLeilao.fromJson(Map<String, dynamic>.from(e as Map))));
