@@ -1,0 +1,62 @@
+# Compila o APK de release do LANCE! e publica na aba Releases do GitHub.
+name: Gerar APK do LANCE!
+
+on:
+  push:
+    paths:
+      - 'lance/**'
+      - '.github/workflows/build-apk.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  apk:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: lance
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: '3.50.0'
+          cache: true
+
+      - name: Dependencias
+        run: flutter pub get
+
+      - name: Testes
+        run: flutter test
+
+      - name: Compilar APK de release (universal, funciona em qualquer celular)
+        run: flutter build apk --release
+
+      - name: Renomear APK
+        run: cp build/app/outputs/flutter-apk/app-release.apk build/LANCE.apk
+
+      - name: Guardar APK como artefato
+        uses: actions/upload-artifact@v4
+        with:
+          name: LANCE-apk
+          path: lance/build/LANCE.apk
+
+      - name: Publicar na aba Releases
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: apk-${{ github.run_number }}
+          name: LANCE! (build ${{ github.run_number }})
+          body: |
+            APK do LANCE! gerado automaticamente.
+            Baixe o LANCE.apk abaixo, abra no celular e toque em Instalar
+            (permita "instalar apps desconhecidos" se o Android pedir).
+          files: lance/build/LANCE.apk
+          target_commitish: ${{ github.sha }}
