@@ -690,7 +690,7 @@ def imagem_da_pagina(titulos):
 
 def metadados(arquivos):
     url = ('https://en.wikipedia.org/w/api.php?action=query&format=json&prop=imageinfo'
-           '&iiprop=url|extmetadata|mime&iiurlwidth=%d&titles=' % TAM
+           '&iiprop=url|extmetadata|mime&iiurlwidth=500&titles='
            + urllib.parse.quote('|'.join('File:' + a for a in arquivos)))
     d = get_json(url)['query']
     normal = {n['to']: n['from'] for n in d.get('normalized', [])}
