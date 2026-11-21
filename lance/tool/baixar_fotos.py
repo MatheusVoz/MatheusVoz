@@ -638,7 +638,7 @@ def slug(texto):
     return re.sub(r'[^a-z0-9]+', '_', t.lower()).strip('_')
 
 
-def _baixar(url, tentativas=8):
+def _baixar(url, tentativas=4):
     """GET com espera progressiva; respeita o Retry-After quando o servidor pede calma (429)."""
     erro = None
     for i in range(tentativas):
@@ -774,7 +774,7 @@ def main():
                 except Exception as e:  # noqa: BLE001
                     print('  falha ao baixar:', item, e)
                     continue
-                time.sleep(1.2)
+                time.sleep(4)
             mapa[f'{tema}|{item}'] = f'assets/fotos/{destino}'
             creditos.append({'tema': tema, 'item': item, 'autor': m['autor'], 'licenca': m['licenca'],
                              'fonte': m['pagina']})
