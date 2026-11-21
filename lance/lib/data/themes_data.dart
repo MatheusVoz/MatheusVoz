@@ -614,7 +614,6 @@ const temasProntos = <ThemeCategory>[
       'Louvre',
       'Portão de Brandemburgo',
       'Torre de Belém',
-      'Maldivas',
       'Bora Bora',
       'Dubai',
       'Las Vegas',

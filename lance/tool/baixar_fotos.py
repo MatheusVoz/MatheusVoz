@@ -664,6 +664,23 @@ def get_bytes(url):
     return _baixar(url)
 
 
+def baixar_foto(url):
+    """Baixa a miniatura; se a largura padrao nao existir para essa imagem, tenta outras."""
+    if '/thumb/' not in url:
+        # Imagem original pequena: monta o caminho da miniatura.
+        m = re.match(r'(https://upload\.wikimedia\.org/wikipedia/\w+)/(.+/)([^/]+)$', url)
+        if m:
+            url = f'{m.group(1)}/thumb/{m.group(2)}{m.group(3)}/500px-{m.group(3)}'
+    erro = None
+    for w in (500, 330, 250):
+        try:
+            return _baixar(re.sub(r'/\d+px-', f'/{w}px-', url), tentativas=2)
+        except Exception as e:  # noqa: BLE001
+            erro = e
+            time.sleep(2)
+    raise erro
+
+
 def itens_dos_temas():
     s = open(os.path.join(RAIZ, 'lib', 'data', 'themes_data.dart'), encoding='utf-8').read()
     temas = {}
@@ -770,7 +787,7 @@ def main():
                 os.remove(caminho)
             if not os.path.exists(caminho):
                 try:
-                    processar(get_bytes(m['thumb']), logo).save(caminho, quality=82, optimize=True)
+                    processar(baixar_foto(m['thumb']), logo).save(caminho, quality=82, optimize=True)
                 except Exception as e:  # noqa: BLE001
                     print('  falha ao baixar:', item, e)
                     continue

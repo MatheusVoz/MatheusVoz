@@ -3697,6 +3697,13 @@
  },
  {
   "tema": "lugares",
+  "item": "Ilha de Páscoa",
+  "autor": "kallerna",
+  "licenca": "CC BY-SA 4.0",
+  "fonte": "https://commons.wikimedia.org/wiki/File:Easter_Island_5.jpg"
+ },
+ {
+  "tema": "lugares",
   "item": "Cataratas do Niágara",
   "autor": "Saffron Blaze",
   "licenca": "CC BY-SA 3.0",
@@ -3750,6 +3757,13 @@
   "autor": "Mariordo (Mario Roberto Durán Ortiz)",
   "licenca": "CC BY-SA 4.0",
   "fonte": "https://commons.wikimedia.org/wiki/File:Las_Vegas_Strip_09_2017_4897.jpg"
+ },
+ {
+  "tema": "lugares",
+  "item": "Tower Bridge",
+  "autor": "Fuzzypiggy",
+  "licenca": "CC BY-SA 3.0",
+  "fonte": "https://commons.wikimedia.org/wiki/File:Tower_Bridge_at_Dawn.jpg"
  },
  {
   "tema": "lugares",
