@@ -764,7 +764,7 @@ def main():
                 continue
             destino = os.path.join(tema, slug(item) + '.jpg')
             caminho = os.path.join(SAIDA, destino)
-            logo = (m['mime'] or '') in ('image/svg+xml', 'image/png', 'image/gif')
+            logo = tema in ('marcas', 'paises') and (m['mime'] or '') in ('image/svg+xml', 'image/png', 'image/gif')
             # REFAZER_LOGOS=1 baixa de novo os logotipos (para encaixar sem cortar).
             if logo and os.environ.get('REFAZER_LOGOS') == '1' and os.path.exists(caminho):
                 os.remove(caminho)
