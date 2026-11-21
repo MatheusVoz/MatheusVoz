@@ -1,9 +1,12 @@
 import 'package:material_ui/material_ui.dart';
 
+import '../data/futebol_posicoes.dart';
+import '../models/posicao.dart';
 import '../theme/app_colors.dart';
 import '../theme/app_text.dart';
 import 'foto_item.dart';
 import 'lance_icon.dart';
+import 'nota_badge.dart';
 
 /// Card central com o item em leilao. Entra com deslize lateral + bounce
 /// sempre que o item muda.
@@ -61,8 +64,7 @@ class ItemCard extends StatelessWidget {
           child: ScaleTransition(scale: bounce, child: child),
         );
       },
-      layoutBuilder: (atual, anteriores) =>
-          Stack(alignment: Alignment.center, children: [...anteriores, ?atual]),
+      layoutBuilder: (atual, anteriores) => Stack(alignment: Alignment.center, children: [...anteriores, ?atual]),
       child: _Conteudo(key: ValueKey(indice), item: item, icone: icone, tema: tema, temaId: temaId),
     );
   }
@@ -73,13 +75,7 @@ class _Conteudo extends StatelessWidget {
   final LanceIconType icone;
   final String tema;
   final String temaId;
-  const _Conteudo({
-    super.key,
-    required this.item,
-    required this.icone,
-    required this.tema,
-    required this.temaId,
-  });
+  const _Conteudo({super.key, required this.item, required this.icone, required this.tema, required this.temaId});
 
   /// Escolhe o tamanho da fonte pelo comprimento do nome.
   double _fonte(double largura) {
@@ -100,16 +96,15 @@ class _Conteudo extends StatelessWidget {
           height: c.maxHeight,
           padding: const EdgeInsets.fromLTRB(10, 10, 10, 8),
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(30),
-            gradient: const LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [Color(0xFFFFFFFF), Color(0xFFF6F0FF), Color(0xFFEDE3FF)],
-            ),
-            border: Border.all(color: AppColors.neon, width: 2.5),
+            borderRadius: BorderRadius.circular(22),
+            color: AppColors.superficie,
+            border: Border.all(color: AppColors.superficieClara, width: 2),
             boxShadow: [
-              BoxShadow(color: AppColors.neon.withValues(alpha: 0.55), blurRadius: 28, spreadRadius: 1),
-              BoxShadow(color: AppColors.roxo.withValues(alpha: 0.35), blurRadius: 60, spreadRadius: 4),
+              BoxShadow(
+                color: AppColors.roxoEscuro.withValues(alpha: 0.08),
+                blurRadius: 16,
+                offset: const Offset(0, 6),
+              ),
             ],
           ),
           child: Column(
@@ -117,7 +112,16 @@ class _Conteudo extends StatelessWidget {
             children: [
               // Foto do item (ou icone do tema, se nao houver foto livre).
               Expanded(
-                child: FotoItem(temaId: temaId, item: item, icone: icone),
+                child: Stack(
+                  children: [
+                    Positioned.fill(
+                      child: FotoItem(temaId: temaId, item: item, icone: icone),
+                    ),
+                    // No Futebol, a nota do jogador fica no canto da foto.
+                    if (temaId == Posicao.temaFutebol && notaDe(item) > 0)
+                      Positioned(top: 8, left: 8, child: NotaBadge(nota: notaDe(item), tamanho: 18)),
+                  ],
+                ),
               ),
               const SizedBox(height: 8),
               SizedBox(
@@ -130,7 +134,7 @@ class _Conteudo extends StatelessWidget {
                       item.toUpperCase(),
                       textAlign: TextAlign.center,
                       maxLines: 2,
-                      style: AppText.titulo(_fonte(c.maxWidth)).copyWith(shadows: AppText.brilho),
+                      style: AppText.titulo(_fonte(c.maxWidth)),
                     ),
                   ),
                 ),

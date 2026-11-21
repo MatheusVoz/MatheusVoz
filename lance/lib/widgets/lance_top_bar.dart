@@ -54,13 +54,7 @@ class BotaoIcone extends StatelessWidget {
   final String rotulo;
   final double tamanho;
 
-  const BotaoIcone({
-    super.key,
-    required this.icone,
-    required this.onTap,
-    required this.rotulo,
-    this.tamanho = 48,
-  });
+  const BotaoIcone({super.key, required this.icone, required this.onTap, required this.rotulo, this.tamanho = 48});
 
   @override
   Widget build(BuildContext context) {
@@ -79,7 +73,7 @@ class BotaoIcone extends StatelessWidget {
               shape: BoxShape.circle,
               color: AppColors.superficieClara,
               border: Border.all(color: AppColors.roxo.withValues(alpha: 0.8), width: 2),
-              boxShadow: [BoxShadow(color: AppColors.roxo.withValues(alpha: 0.35), blurRadius: 12)],
+              boxShadow: [BoxShadow(color: Color(0x14000000), blurRadius: 8, offset: Offset(0, 3))],
             ),
             alignment: Alignment.center,
             child: LanceIcon(icone, tamanho: tamanho * 0.5),

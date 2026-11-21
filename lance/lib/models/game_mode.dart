@@ -60,6 +60,31 @@ List<String> sortearMaletas(ThemeCategory tema, {int quantidade = 5, Random? ran
   return itens.take(quantidade).toList();
 }
 
+/// Ordem das rodadas da maleta no Futebol: do gol para o ataque.
+const rodadasMaletaFutebol = [
+  Posicao.goleiro,
+  Posicao.volante,
+  Posicao.meiaEsquerda,
+  Posicao.meiaDireita,
+  Posicao.atacante,
+];
+
+/// Maletas de uma rodada: [quantidade] itens ainda nao usados. No Futebol, so
+/// jogadores que jogam em [posicao] (rodada de goleiros = 5 goleiros, etc.).
+List<String> maletasDaRodada(
+  ThemeCategory tema, {
+  Posicao? posicao,
+  Set<String> usados = const {},
+  int quantidade = 5,
+  Random? random,
+}) {
+  final candidatos = tema.itens.toSet().difference(usados).where((i) {
+    if (posicao == null || tema.id != Posicao.temaFutebol) return true;
+    return funcaoDe(i).posicoes.contains(posicao);
+  }).toList()..shuffle(random ?? Random());
+  return candidatos.take(quantidade).toList();
+}
+
 /// Monta a ordem (sorteada) dos itens de uma partida.
 /// No tema Futebol garante pelo menos [goleirosMin] goleiros no meio dos itens,
 /// para ninguem ter que colocar um atacante no gol.

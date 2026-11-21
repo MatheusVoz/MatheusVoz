@@ -21,10 +21,8 @@ class _LanceLogoState extends State<LanceLogo> with TickerProviderStateMixin {
     vsync: this,
     duration: const Duration(milliseconds: 1200),
   )..forward();
-  late final AnimationController _loop = AnimationController(
-    vsync: this,
-    duration: const Duration(milliseconds: 2600),
-  )..repeat();
+  late final AnimationController _loop = AnimationController(vsync: this, duration: const Duration(milliseconds: 2600))
+    ..repeat();
 
   @override
   void dispose() {
@@ -68,13 +66,7 @@ class _LanceLogoState extends State<LanceLogo> with TickerProviderStateMixin {
                   decoration: BoxDecoration(
                     gradient: AppColors.gradienteRoxo,
                     borderRadius: BorderRadius.circular(selo * 0.24),
-                    boxShadow: [
-                      BoxShadow(
-                        color: AppColors.roxo.withValues(alpha: 0.35 + 0.2 * impacto),
-                        blurRadius: 26 * s,
-                        offset: Offset(0, 10 * s),
-                      ),
-                    ],
+                    boxShadow: [BoxShadow(color: Color(0x14000000), blurRadius: 8, offset: Offset(0, 3))],
                   ),
                   child: Stack(
                     children: [
@@ -93,14 +85,6 @@ class _LanceLogoState extends State<LanceLogo> with TickerProviderStateMixin {
               ),
               SizedBox(height: 16 * s),
               _Marca(tamanho: 58 * s, entrada: e),
-              SizedBox(height: 2 * s),
-              Text(
-                'JOGOS PARA A GALERA',
-                style: AppText.texto(
-                  13 * s,
-                  cor: AppColors.lilas,
-                ).copyWith(letterSpacing: 3.5 * s, fontWeight: FontWeight.w700),
-              ),
             ],
           ),
         );

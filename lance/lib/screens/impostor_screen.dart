@@ -186,12 +186,7 @@ class _ImpostorScreenState extends State<ImpostorScreen> {
             color: impostor ? AppColors.roxoEscuro : AppColors.superficie,
             borderRadius: BorderRadius.circular(28),
             border: Border.all(color: impostor ? AppColors.alerta : AppColors.neon, width: 3),
-            boxShadow: [
-              BoxShadow(
-                color: (impostor ? AppColors.alerta : AppColors.neon).withValues(alpha: 0.35),
-                blurRadius: 24,
-              ),
-            ],
+            boxShadow: [BoxShadow(color: Color(0x14000000), blurRadius: 8, offset: Offset(0, 3))],
           ),
           child: Column(
             children: [
@@ -236,11 +231,7 @@ class _ImpostorScreenState extends State<ImpostorScreen> {
     const SizedBox(height: 6),
     Text('HORA DE VOTAR', style: AppText.titulo(26)),
     const SizedBox(height: 6),
-    Text(
-      'Conversem e decidam. Em quem o grupo votou?',
-      textAlign: TextAlign.center,
-      style: AppText.texto(15),
-    ),
+    Text('Conversem e decidam. Em quem o grupo votou?', textAlign: TextAlign.center, style: AppText.texto(15)),
     const SizedBox(height: 18),
     Expanded(
       child: GridView.count(
@@ -258,10 +249,7 @@ class _ImpostorScreenState extends State<ImpostorScreen> {
                 decoration: BoxDecoration(
                   color: AppColors.superficie,
                   borderRadius: BorderRadius.circular(18),
-                  border: Border.all(
-                    color: AppColors.coresJogadores[i % AppColors.coresJogadores.length],
-                    width: 2,
-                  ),
+                  border: Border.all(color: AppColors.coresJogadores[i % AppColors.coresJogadores.length], width: 2),
                 ),
                 child: Text(
                   _nome(i),

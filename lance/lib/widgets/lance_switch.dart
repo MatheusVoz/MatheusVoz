@@ -26,9 +26,7 @@ class LanceSwitch extends StatelessWidget {
             gradient: valor ? AppColors.gradienteBotao : null,
             color: valor ? null : AppColors.desativado.withValues(alpha: 0.5),
             border: Border.all(color: valor ? AppColors.branco : AppColors.desativado, width: 2),
-            boxShadow: valor
-                ? [BoxShadow(color: AppColors.neon.withValues(alpha: 0.5), blurRadius: 14)]
-                : null,
+            boxShadow: valor ? [BoxShadow(color: Color(0x14000000), blurRadius: 8, offset: Offset(0, 3))] : null,
           ),
           child: AnimatedAlign(
             duration: const Duration(milliseconds: 240),

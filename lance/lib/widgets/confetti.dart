@@ -39,8 +39,7 @@ class _Particula {
 }
 
 class _ConfettiRainState extends State<ConfettiRain> with SingleTickerProviderStateMixin {
-  late final AnimationController _ctrl = AnimationController(vsync: this, duration: widget.duracao)
-    ..forward();
+  late final AnimationController _ctrl = AnimationController(vsync: this, duration: widget.duracao)..forward();
   late final List<_Particula> _ps = List.generate(widget.quantidade, (_) => _Particula(math.Random()));
 
   @override

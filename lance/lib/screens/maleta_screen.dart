@@ -11,21 +11,22 @@ import '../theme/app_colors.dart';
 import '../theme/app_text.dart';
 import '../widgets/campo_futebol.dart';
 import '../widgets/confetti.dart';
-import '../widgets/escalar_sheet.dart';
 import '../widgets/foto_item.dart';
 import '../widgets/glow_button.dart';
 import '../widgets/lance_background.dart';
 import '../widgets/lance_icon.dart';
 import '../widgets/lance_top_bar.dart';
+import '../widgets/nota_badge.dart';
 import '../widgets/option_selector.dart';
 import '../widgets/pressable.dart';
 
 enum _Fase { config, jogo, fim }
 
-/// Jogo da maleta: cada jogador monta um time de 5. Na sua vez, a pessoa abre
-/// uma das maletas, ve quem saiu e escala numa posicao do seu campinho
-/// (Futebol) ou no seu time (outros temas). Pode tambem passar a vez.
-/// No Futebol sempre aparecem goleiros suficientes (2 por jogador, no minimo).
+/// Jogo da maleta, em rodadas. Em cada rodada aparecem 5 maletas; cada
+/// jogador, na sua vez, escolhe uma. As que ninguem escolheu sao descartadas
+/// e a proxima rodada comeca.
+/// No Futebol as rodadas seguem as posicoes: primeiro 5 goleiros, depois
+/// volantes, meias e atacantes. Vence o time com a maior soma de notas.
 class MaletaScreen extends StatefulWidget {
   final ThemeCategory tema;
   const MaletaScreen({super.key, required this.tema});
@@ -44,19 +45,27 @@ class _MaletaScreenState extends State<MaletaScreen> with TickerProviderStateMix
   /// Time de cada jogador: vaga (0..4) -> item. No Futebol, a vaga e a Posicao.
   late List<Map<int, String>> _times;
 
-  /// Itens que ainda vao sair (ordem sorteada).
-  List<String> _baralho = [];
+  /// Rodada atual (0..4).
+  int _rodada = 0;
 
-  /// Maletas da rodada (null = ja aberta).
+  /// Maletas da rodada (null = ja escolhida por alguem).
   List<String?> _maletas = [];
+
+  /// Quem ja escolheu nesta rodada.
+  final Set<int> _jaEscolheram = {};
   final Set<String> _usados = {};
   int _vez = 0;
+
+  /// Fim da rodada: as maletas que sobraram aparecem abertas (descartadas).
+  bool _mostrandoDescartes = false;
+
+  /// Vencedor (no Futebol sai pela soma das notas; nos outros, a galera escolhe).
   int? _vencedor;
 
   /// Maleta que esta tremendo (abrindo).
   int? _abrindo;
 
-  /// Aviso animado "Vez de ..." entre as jogadas.
+  /// Aviso animado "Sua vez" entre as jogadas.
   late final AnimationController _aviso = AnimationController(
     vsync: this,
     duration: const Duration(milliseconds: 1300),
@@ -65,6 +74,23 @@ class _MaletaScreenState extends State<MaletaScreen> with TickerProviderStateMix
   bool get _futebol => widget.tema.id == Posicao.temaFutebol;
   String _nome(int i) => 'Jogador ${i + 1}';
   Color _cor(int i) => AppColors.coresJogadores[i % AppColors.coresJogadores.length];
+
+  /// Posicao disputada na rodada (so no Futebol).
+  Posicao? get _posicaoDaRodada => _futebol ? rodadasMaletaFutebol[_rodada] : null;
+
+  String get _nomeDaRodada {
+    final p = _posicaoDaRodada;
+    if (p == null) return 'Rodada ${_rodada + 1} de ${MaletaScreen.tamanhoTime}';
+    return switch (p) {
+      Posicao.goleiro => 'Goleiros',
+      Posicao.volante => 'Volantes e zagueiros',
+      Posicao.meiaEsquerda || Posicao.meiaDireita => 'Meias',
+      Posicao.atacante => 'Atacantes',
+    };
+  }
+
+  /// Soma das notas do time (Futebol).
+  int _forca(int j) => _times[j].values.fold(0, (s, i) => s + notaDe(i));
 
   @override
   void dispose() {
@@ -76,15 +102,9 @@ class _MaletaScreenState extends State<MaletaScreen> with TickerProviderStateMix
     setState(() {
       _times = List.generate(_jogadores, (_) => <int, String>{});
       _usados.clear();
-      _vez = 0;
       _vencedor = null;
-      // Itens de sobra para quem passar a vez; no Futebol, 2 goleiros por jogador.
-      _baralho = montarBaralho(
-        widget.tema,
-        _jogadores * MaletaScreen.tamanhoTime * 2,
-        goleirosMin: _jogadores * 2,
-      );
-      _novaRodadaDeMaletas();
+      _rodada = 0;
+      _iniciarRodada();
       _fase = _Fase.jogo;
     });
     _mostrarAviso();
@@ -92,148 +112,125 @@ class _MaletaScreenState extends State<MaletaScreen> with TickerProviderStateMix
 
   void _mostrarAviso() => _aviso.forward(from: 0);
 
-  /// Alguem ainda precisa de goleiro?
-  bool get _faltaGoleiro => _futebol && _times.any((t) => !t.containsKey(Posicao.goleiro.index));
-
-  /// Prepara 5 maletas novas. Se alguem ainda nao tem goleiro, garante um entre elas.
-  void _novaRodadaDeMaletas() {
-    if (_baralho.length < MaletaScreen.maletasPorRodada) {
-      _baralho.addAll(
-        montarBaralho(
-          widget.tema,
-          30,
-          goleirosMin: _faltaGoleiro ? 3 : 0,
-          excluir: {..._usados, ..._baralho},
-        ),
-      );
-    }
-    final rodada = _baralho.take(MaletaScreen.maletasPorRodada).toList();
-    _baralho.removeRange(0, rodada.length);
-    if (_faltaGoleiro && !rodada.any((i) => funcaoDe(i) == Funcao.goleiro)) {
-      final k = _baralho.indexWhere((i) => funcaoDe(i) == Funcao.goleiro);
-      if (k >= 0) {
-        final troca = math.Random().nextInt(rodada.length);
-        final goleiro = _baralho.removeAt(k);
-        _baralho.add(rodada[troca]);
-        rodada[troca] = goleiro;
-      }
-    }
-    _maletas = List<String?>.of(rodada);
+  /// Sorteia as 5 maletas da rodada. Quem comeca escolhendo muda a cada rodada.
+  void _iniciarRodada() {
+    _maletas = List<String?>.of(maletasDaRodada(widget.tema, posicao: _posicaoDaRodada, usados: _usados));
+    _jaEscolheram.clear();
+    _mostrandoDescartes = false;
+    _vez = _rodada % _jogadores;
   }
-
-  List<Posicao> _livres(int jogador) => [
-    for (final p in Posicao.values)
-      if (!_times[jogador].containsKey(p.index)) p,
-  ];
-
-  bool _completo(int jogador) => _times[jogador].length >= MaletaScreen.tamanhoTime;
 
   Future<void> _abrir(int i) async {
     final item = _maletas[i];
-    if (item == null || _abrindo != null) return;
+    if (item == null || _abrindo != null || _mostrandoDescartes) return;
     // A maleta treme antes de abrir.
     setState(() => _abrindo = i);
     FeedbackService.instancia.vibrarLeve();
     await Future<void>.delayed(const Duration(milliseconds: 520));
     if (!mounted) return;
     FeedbackService.instancia.tocar(Som.moeda);
-
-    int? vaga;
-    var passou = false;
-    if (_futebol) {
-      final escolha = await escolherPosicao(
-        context,
-        dono: _nome(_vez),
-        cor: _cor(_vez),
-        item: item,
-        escalacao: {for (final e in _times[_vez].entries) Posicao.values[e.key]: e.value},
-        livres: _livres(_vez),
-        textoAlternativa: 'Não quero, passar a vez',
-      );
-      vaga = escolha.posicao?.index;
-      passou = escolha.alternativa;
-    } else {
-      final ok = await _revelar(item);
-      if (ok == true) {
-        vaga = List.generate(
-          MaletaScreen.tamanhoTime,
-          (k) => k,
-        ).firstWhere((k) => !_times[_vez].containsKey(k));
-      } else {
-        passou = true;
-      }
-    }
+    await _revelar(item);
     if (!mounted) return;
     setState(() {
       _abrindo = null;
-      if (vaga == null && !passou) return;
-      if (vaga != null) _times[_vez][vaga] = item;
+      final vaga = _posicaoDaRodada?.index ?? _rodada;
+      _times[_vez][vaga] = item;
       _usados.add(item);
       _maletas[i] = null;
-      if (_maletas.every((m) => m == null)) _novaRodadaDeMaletas();
-      _proximaVez();
+      _jaEscolheram.add(_vez);
+      if (_jaEscolheram.length == _jogadores) {
+        // Todos escolheram: as outras maletas sao descartadas.
+        _mostrandoDescartes = true;
+      } else {
+        _vez = (_vez + 1) % _jogadores;
+      }
+    });
+    if (!_mostrandoDescartes) _mostrarAviso();
+  }
+
+  /// Depois de ver as descartadas: proxima rodada ou resultado.
+  void _seguir() {
+    setState(() {
+      for (final m in _maletas) {
+        if (m != null) _usados.add(m);
+      }
+      if (_rodada + 1 >= MaletaScreen.tamanhoTime) {
+        _fase = _Fase.fim;
+        if (_futebol) {
+          final forcas = List.generate(_jogadores, _forca);
+          _vencedor = forcas.indexOf(forcas.reduce(math.max));
+          FeedbackService.instancia.tocar(Som.fanfarra);
+          FeedbackService.instancia.vibrarForte();
+        }
+        return;
+      }
+      _rodada++;
+      _iniciarRodada();
     });
     if (_fase == _Fase.jogo) _mostrarAviso();
   }
 
-  void _proximaVez() {
-    if (List.generate(_jogadores, (k) => k).every(_completo)) {
-      _fase = _Fase.fim;
-      return;
-    }
-    do {
-      _vez = (_vez + 1) % _jogadores;
-    } while (_completo(_vez));
-    // Se ninguem mais precisa de goleiro, nada muda; se precisa e nao ha nas
-    // maletas restantes, a proxima rodada garante um.
-  }
-
-  /// Revela o item (temas sem campinho). true = colocar no time; false = passar.
-  Future<bool?> _revelar(String item) {
-    return showModalBottomSheet<bool>(
+  /// Mostra o que saiu na maleta.
+  Future<void> _revelar(String item) {
+    final cor = _cor(_vez);
+    final posicao = _posicaoDaRodada;
+    return showModalBottomSheet<void>(
       context: context,
       isDismissible: false,
       enableDrag: false,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
       builder: (ctx) {
-        final lado = math.min(200.0, MediaQuery.sizeOf(ctx).height * 0.28);
+        final lado = math.min(220.0, MediaQuery.sizeOf(ctx).height * 0.3);
         return SafeArea(
-          child: Container(
-            margin: const EdgeInsets.all(12),
-            padding: const EdgeInsets.all(18),
-            decoration: BoxDecoration(
-              color: AppColors.superficie,
-              borderRadius: BorderRadius.circular(26),
-              border: Border.all(color: _cor(_vez), width: 2),
-            ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                SizedBox(
-                  width: lado,
-                  height: lado,
-                  child: FotoItem(temaId: widget.tema.id, item: item, icone: widget.tema.icone),
-                ),
-                const SizedBox(height: 10),
-                Text(item, textAlign: TextAlign.center, style: AppText.titulo(22)),
-                const SizedBox(height: 14),
-                GlowButton(
-                  texto: 'Colocar no time',
-                  icone: LanceIconType.check,
-                  altura: 48,
-                  onTap: () => Navigator.of(ctx).pop(true),
-                ),
-                const SizedBox(height: 8),
-                GlowButton(
-                  texto: 'Não quero, passar a vez',
-                  icone: LanceIconType.pular,
-                  estilo: EstiloBotao.secundario,
-                  altura: 44,
-                  tamanhoTexto: 15,
-                  onTap: () => Navigator.of(ctx).pop(false),
-                ),
-              ],
+          child: TweenAnimationBuilder<double>(
+            tween: Tween(begin: 0.85, end: 1),
+            duration: const Duration(milliseconds: 380),
+            curve: Curves.easeOutBack,
+            builder: (_, v, c) => Transform.scale(scale: v, child: c),
+            child: Container(
+              margin: const EdgeInsets.all(12),
+              padding: const EdgeInsets.all(18),
+              decoration: BoxDecoration(
+                color: AppColors.superficie,
+                borderRadius: BorderRadius.circular(22),
+                border: Border.all(color: cor, width: 2),
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    _nome(_vez),
+                    style: AppText.texto(14, cor: cor, peso: FontWeight.w700),
+                  ),
+                  const SizedBox(height: 8),
+                  SizedBox(
+                    width: lado,
+                    height: lado,
+                    child: FotoItem(temaId: widget.tema.id, item: item, icone: widget.tema.icone),
+                  ),
+                  const SizedBox(height: 10),
+                  Text(item, textAlign: TextAlign.center, style: AppText.titulo(22)),
+                  if (_futebol) ...[
+                    const SizedBox(height: 6),
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        NotaBadge(nota: notaDe(item), tamanho: 16),
+                        const SizedBox(width: 8),
+                        Text(funcaoDe(item).nome, style: AppText.texto(15)),
+                      ],
+                    ),
+                  ],
+                  const SizedBox(height: 14),
+                  GlowButton(
+                    texto: posicao == null ? 'Colocar no time' : 'Escalar: ${posicao.nome}',
+                    icone: LanceIconType.check,
+                    altura: 48,
+                    onTap: () => Navigator.of(ctx).pop(),
+                  ),
+                ],
+              ),
             ),
           ),
         );
@@ -291,7 +288,7 @@ class _MaletaScreenState extends State<MaletaScreen> with TickerProviderStateMix
                   decoration: BoxDecoration(
                     color: _cor(_vez),
                     borderRadius: BorderRadius.circular(26),
-                    boxShadow: [BoxShadow(color: _cor(_vez).withValues(alpha: 0.5), blurRadius: 30)],
+                    boxShadow: [BoxShadow(color: Color(0x14000000), blurRadius: 8, offset: Offset(0, 3))],
                   ),
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
@@ -317,14 +314,17 @@ class _MaletaScreenState extends State<MaletaScreen> with TickerProviderStateMix
     child: Column(
       children: [
         const Spacer(),
-        const LanceIcon(LanceIconType.maleta, tamanho: 86),
+        const LanceIcon(LanceIconType.maleta, tamanho: 80),
         const SizedBox(height: 10),
-        Text('Tema: ${widget.tema.nome}', style: AppText.texto(16)),
-        const SizedBox(height: 6),
+        Text(widget.tema.nome, style: AppText.titulo(20)),
+        const SizedBox(height: 8),
         Text(
-          'Cada um monta um time de ${MaletaScreen.tamanhoTime}. Na sua vez, abra uma maleta e '
-          '${_futebol ? 'escale o jogador numa posição do seu campo' : 'coloque o item no seu time'}, '
-          'ou passe a vez.',
+          _futebol
+              ? 'São 5 rodadas: goleiros, volantes, meias e atacantes. '
+                    'Cada um escolhe uma maleta; as que sobram vão embora. '
+                    'No fim, ganha o time com a maior soma de notas.'
+              : 'São 5 rodadas de 5 maletas. Cada um escolhe uma; '
+                    'as que sobram vão embora. No fim, a galera escolhe o melhor time.',
           textAlign: TextAlign.center,
           style: AppText.texto(14),
         ),
@@ -356,7 +356,7 @@ class _MaletaScreenState extends State<MaletaScreen> with TickerProviderStateMix
             width: lado,
             child: AnimatedOpacity(
               duration: const Duration(milliseconds: 250),
-              opacity: !destacarVez || j == _vez ? 1 : 0.55,
+              opacity: !destacarVez || j == _vez || _mostrandoDescartes ? 1 : 0.55,
               child: _futebol ? _campoDe(j, lado) : _listaDe(j),
             ),
           ),
@@ -365,7 +365,7 @@ class _MaletaScreenState extends State<MaletaScreen> with TickerProviderStateMix
   }
 
   Widget _campoDe(int j, double lado) => CampoFutebol(
-    titulo: _nome(j),
+    titulo: '${_nome(j)}  ·  ${_forca(j)}',
     cor: _cor(j),
     escalacao: {for (final e in _times[j].entries) Posicao.values[e.key]: e.value},
     mostrarNomes: lado >= 150,
@@ -375,7 +375,7 @@ class _MaletaScreenState extends State<MaletaScreen> with TickerProviderStateMix
     padding: const EdgeInsets.all(8),
     decoration: BoxDecoration(
       color: AppColors.superficie,
-      borderRadius: BorderRadius.circular(16),
+      borderRadius: BorderRadius.circular(14),
       border: Border.all(color: _cor(j), width: 2),
     ),
     child: Column(
@@ -395,12 +395,7 @@ class _MaletaScreenState extends State<MaletaScreen> with TickerProviderStateMix
                   child: AspectRatio(
                     aspectRatio: 1,
                     child: _times[j].containsKey(k)
-                        ? FotoItem(
-                            temaId: widget.tema.id,
-                            item: _times[j][k]!,
-                            icone: widget.tema.icone,
-                            raio: 8,
-                          )
+                        ? FotoItem(temaId: widget.tema.id, item: _times[j][k]!, icone: widget.tema.icone, raio: 8)
                         : Container(
                             decoration: BoxDecoration(
                               color: AppColors.superficieClara,
@@ -416,13 +411,9 @@ class _MaletaScreenState extends State<MaletaScreen> with TickerProviderStateMix
     ),
   );
 
-  /// Tela do jogo: campos e maletas centralizados, ocupando bem a tela
-  /// (celular em pe ou tablet).
+  /// Tela do jogo: campos em cima, rodada no meio e maletas embaixo,
+  /// tudo centralizado (celular em pe ou tablet).
   Widget _jogo() {
-    final restantes = [
-      for (var i = 0; i < _maletas.length; i++)
-        if (_maletas[i] != null) i,
-    ];
     return LayoutBuilder(
       builder: (context, c) {
         final largura = c.maxWidth - 28;
@@ -433,7 +424,7 @@ class _MaletaScreenState extends State<MaletaScreen> with TickerProviderStateMix
         final alturaMaletas = linhasMaletas * ladoMaleta * 0.86 + (linhasMaletas - 1) * 10;
         // Campos: o maior possivel no espaco que sobra.
         final linhasTimes = _jogadores <= 2 ? 1 : 2;
-        final disponivel = c.maxHeight - alturaMaletas - 50 - 56;
+        final disponivel = c.maxHeight - alturaMaletas - 50 - 80;
         final ladoPorAltura = _futebol ? disponivel / linhasTimes - 26 : double.infinity;
         final ladoTime = math.min(math.min((largura - 12) / 2, ladoPorAltura), 460.0);
         return SingleChildScrollView(
@@ -445,40 +436,60 @@ class _MaletaScreenState extends State<MaletaScreen> with TickerProviderStateMix
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   _times_(math.max(ladoTime, 120)),
-                  const SizedBox(height: 18),
-                  // De quem e a vez.
+                  const SizedBox(height: 16),
+                  Text(
+                    'RODADA ${_rodada + 1}/${MaletaScreen.tamanhoTime}  ·  ${_nomeDaRodada.toUpperCase()}',
+                    key: const ValueKey('rodada'),
+                    style: AppText.texto(13, cor: AppColors.lilas, peso: FontWeight.w700),
+                  ),
+                  const SizedBox(height: 6),
                   AnimatedSwitcher(
                     duration: const Duration(milliseconds: 300),
                     child: Container(
-                      key: ValueKey(_vez),
+                      key: ValueKey('$_vez$_mostrandoDescartes'),
                       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                      decoration: BoxDecoration(color: _cor(_vez), borderRadius: BorderRadius.circular(14)),
+                      decoration: BoxDecoration(
+                        color: _mostrandoDescartes ? AppColors.roxoEscuro : _cor(_vez),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
                       child: Text(
-                        'Vez de ${_nome(_vez)}: escolha uma maleta',
+                        _mostrandoDescartes ? 'Essas foram descartadas' : 'Vez de ${_nome(_vez)}',
                         textAlign: TextAlign.center,
                         style: AppText.texto(15, cor: AppColors.brancoPuro, peso: FontWeight.w700),
                       ),
                     ),
                   ),
-                  const SizedBox(height: 14),
+                  const SizedBox(height: 12),
                   Wrap(
                     spacing: 10,
                     runSpacing: 10,
                     alignment: WrapAlignment.center,
                     children: [
-                      for (final i in restantes)
-                        SizedBox(
-                          width: ladoMaleta,
-                          height: ladoMaleta * 0.86,
-                          child: _Maleta(
-                            key: ValueKey('maleta_${_maletas[i]}'),
-                            numero: i + 1,
-                            tremendo: _abrindo == i,
-                            onTap: () => _abrir(i),
+                      for (var i = 0; i < _maletas.length; i++)
+                        if (_maletas[i] != null)
+                          SizedBox(
+                            width: ladoMaleta,
+                            height: ladoMaleta * 0.86,
+                            child: _mostrandoDescartes
+                                ? _Descartada(item: _maletas[i]!, tema: widget.tema, futebol: _futebol)
+                                : _Maleta(
+                                    key: ValueKey('maleta_${_maletas[i]}'),
+                                    numero: i + 1,
+                                    tremendo: _abrindo == i,
+                                    onTap: () => _abrir(i),
+                                  ),
                           ),
-                        ),
                     ],
                   ),
+                  if (_mostrandoDescartes) ...[
+                    const SizedBox(height: 14),
+                    GlowButton(
+                      texto: _rodada + 1 >= MaletaScreen.tamanhoTime ? 'Ver resultado' : 'Próxima rodada',
+                      icone: LanceIconType.play,
+                      altura: 48,
+                      onTap: _seguir,
+                    ),
+                  ],
                 ],
               ),
             ),
@@ -489,6 +500,9 @@ class _MaletaScreenState extends State<MaletaScreen> with TickerProviderStateMix
   }
 
   Widget _fim() {
+    // Ordem final: no Futebol, pela soma das notas.
+    final ordem = List.generate(_jogadores, (j) => j);
+    if (_futebol) ordem.sort((a, b) => _forca(b).compareTo(_forca(a)));
     return LayoutBuilder(
       builder: (context, c) {
         final ladoTime = math.min((c.maxWidth - 40) / 2, 460.0);
@@ -509,11 +523,15 @@ class _MaletaScreenState extends State<MaletaScreen> with TickerProviderStateMix
                         builder: (_, v, ch) => Transform.scale(scale: v, child: ch),
                         child: Column(
                           children: [
-                            const LanceIcon(LanceIconType.coroa, tamanho: 50),
-                            Text(_nome(_vencedor!), style: AppText.titulo(30, cor: _cor(_vencedor!))),
+                            const LanceIcon(LanceIconType.coroa, tamanho: 46),
+                            Text(_nome(_vencedor!), style: AppText.titulo(28, cor: _cor(_vencedor!))),
                           ],
                         ),
                       ),
+                    ],
+                    if (_futebol) ...[
+                      const SizedBox(height: 10),
+                      for (var k = 0; k < ordem.length; k++) _linhaPlacar(k + 1, ordem[k]),
                     ],
                     const SizedBox(height: 12),
                     _times_(ladoTime, destacarVez: false),
@@ -545,18 +563,14 @@ class _MaletaScreenState extends State<MaletaScreen> with TickerProviderStateMix
                                     alignment: Alignment.center,
                                     decoration: BoxDecoration(
                                       color: AppColors.superficie,
-                                      borderRadius: BorderRadius.circular(14),
+                                      borderRadius: BorderRadius.circular(12),
                                       border: Border.all(color: _cor(j), width: 2),
                                     ),
                                     child: FittedBox(
                                       fit: BoxFit.scaleDown,
                                       child: Text(
                                         _nome(j),
-                                        style: AppText.texto(
-                                          14,
-                                          cor: AppColors.branco,
-                                          peso: FontWeight.w700,
-                                        ),
+                                        style: AppText.texto(14, cor: AppColors.branco, peso: FontWeight.w700),
                                       ),
                                     ),
                                   ),
@@ -590,6 +604,72 @@ class _MaletaScreenState extends State<MaletaScreen> with TickerProviderStateMix
           ],
         );
       },
+    );
+  }
+
+  /// Linha do placar final: posicao, jogador e soma das notas.
+  Widget _linhaPlacar(int pos, int j) => Container(
+    key: ValueKey('placar_$j'),
+    margin: const EdgeInsets.only(bottom: 6),
+    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+    constraints: const BoxConstraints(maxWidth: 420),
+    decoration: BoxDecoration(
+      color: AppColors.superficie,
+      borderRadius: BorderRadius.circular(12),
+      border: Border.all(color: pos == 1 ? AppColors.neon : AppColors.superficieClara, width: 2),
+    ),
+    child: Row(
+      children: [
+        Text('$posº', style: AppText.numero(16)),
+        const SizedBox(width: 12),
+        Container(
+          width: 10,
+          height: 10,
+          decoration: BoxDecoration(shape: BoxShape.circle, color: _cor(j)),
+        ),
+        const SizedBox(width: 8),
+        Expanded(
+          child: Text(
+            _nome(j),
+            style: AppText.texto(15, cor: AppColors.branco, peso: FontWeight.w700),
+          ),
+        ),
+        Text('${_forca(j)}', style: AppText.numero(18)),
+        const SizedBox(width: 4),
+        Text('pts', style: AppText.texto(12)),
+      ],
+    ),
+  );
+}
+
+/// Maleta que ninguem escolheu: aparece aberta e apagada no fim da rodada.
+class _Descartada extends StatelessWidget {
+  final String item;
+  final ThemeCategory tema;
+  final bool futebol;
+  const _Descartada({required this.item, required this.tema, required this.futebol});
+
+  @override
+  Widget build(BuildContext context) {
+    return Opacity(
+      opacity: 0.55,
+      child: Column(
+        children: [
+          Expanded(
+            child: AspectRatio(
+              aspectRatio: 1,
+              child: FotoItem(temaId: tema.id, item: item, icone: tema.icone, raio: 12),
+            ),
+          ),
+          const SizedBox(height: 2),
+          Text(
+            futebol ? '$item ${notaDe(item)}' : item,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: AppText.texto(11, cor: AppColors.branco, peso: FontWeight.w600),
+          ),
+        ],
+      ),
     );
   }
 }
@@ -648,13 +728,7 @@ class _Maleta extends StatelessWidget {
                         ),
                         borderRadius: BorderRadius.circular(w * 0.12),
                         border: Border.all(color: tremendo ? AppColors.neon : AppColors.roxo, width: 2.5),
-                        boxShadow: [
-                          BoxShadow(
-                            color: (tremendo ? AppColors.neon : AppColors.roxo).withValues(alpha: 0.3),
-                            blurRadius: 12,
-                            offset: const Offset(0, 5),
-                          ),
-                        ],
+                        boxShadow: [BoxShadow(color: Color(0x14000000), blurRadius: 8, offset: Offset(0, 3))],
                       ),
                       alignment: Alignment.center,
                       child: Text('$numero', style: AppText.numero(w * 0.36, cor: AppColors.roxoEscuro)),

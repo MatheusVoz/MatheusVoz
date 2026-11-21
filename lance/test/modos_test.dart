@@ -79,6 +79,20 @@ void main() {
     }
   });
 
+  test('maleta no futebol: cada rodada so tem jogadores da posicao', () {
+    final tema = temaPorId('futebol')!;
+    for (var seed = 0; seed < 30; seed++) {
+      final usados = <String>{};
+      for (final p in rodadasMaletaFutebol) {
+        final m = maletasDaRodada(tema, posicao: p, usados: usados, random: Random(seed));
+        expect(m.length, 5);
+        expect(m.every((i) => funcaoDe(i).posicoes.contains(p)), isTrue);
+        expect(m.toSet().intersection(usados), isEmpty);
+        usados.addAll(m);
+      }
+    }
+  });
+
   test('maletas: 5 itens diferentes do tema', () {
     final tema = temaPorId('futebol')!;
     for (var seed = 0; seed < 30; seed++) {
@@ -135,32 +149,36 @@ void main() {
       testWidgets('fluxo Maleta ($tema): tela $tela', (t) async {
         await abrirModo(t, 'Maleta', tela, tema: tema);
         await tocar(t, find.text('Começar'));
-        await esperar(t, 600);
-        // Primeiro alguem passa a vez; depois 2 jogadores x 5 = 10 escalacoes.
-        await tocar(t, find.bySemanticsLabel(RegExp(r'^Abrir maleta')).first);
-        await esperar(t, 1400);
-        await tocar(t, find.text('Não quero, passar a vez'));
         await esperar(t, 1500);
-        for (var rodada = 0; rodada < 10; rodada++) {
-          await tocar(t, find.bySemanticsLabel(RegExp(r'^Abrir maleta')).first);
-          await esperar(t, 1400);
-          if (tema == 'FUTEBOL') {
-            if (tela == 'media' && gerarCapturas && rodada == 3) {
-              await capturar(t, '13b_maleta_escalar_$tela');
+        // 5 rodadas; em cada uma os 2 jogadores escolhem e o resto e descartado.
+        for (var rodada = 0; rodada < 5; rodada++) {
+          for (var vez = 0; vez < 2; vez++) {
+            await tocar(t, find.bySemanticsLabel(RegExp(r'^Abrir maleta')).first);
+            await esperar(t, 1400);
+            if (tela == 'media' && gerarCapturas && tema == 'FUTEBOL' && rodada == 2 && vez == 0) {
+              await capturar(t, '13b_maleta_revelar_$tela');
             }
-            await tocar(t, find.bySemanticsLabel(RegExp('^Escalar em ')).first);
-          } else {
-            await tocar(t, find.text('Colocar no time'));
+            await tocar(t, find.textContaining(tema == 'FUTEBOL' ? 'Escalar:' : 'Colocar no time'));
+            await esperar(t, 1500);
           }
-          await esperar(t, 700);
-          if ((tela == 'media' || tela == 'tablet') && gerarCapturas && tema == 'FUTEBOL' && rodada == 5) {
+          expect(find.text('Essas foram descartadas'), findsOneWidget);
+          expect(find.bySemanticsLabel(RegExp(r'^Abrir maleta')), findsNothing);
+          if ((tela == 'media' || tela == 'tablet') && gerarCapturas && tema == 'FUTEBOL' && rodada == 2) {
             await capturar(t, '13_maleta_$tela');
           }
+          await tocar(t, find.text(rodada < 4 ? 'Próxima rodada' : 'Ver resultado'));
+          await esperar(t, 1500);
         }
-        expect(find.text('TIMES COMPLETOS'), findsOneWidget);
-        await tocar(t, find.byKey(const ValueKey('vencedor_1')));
-        await esperar(t, 900);
-        expect(find.text('CAMPEÃO'), findsOneWidget);
+        if (tema == 'FUTEBOL') {
+          // Campeao automatico pela soma das notas.
+          expect(find.text('CAMPEÃO'), findsOneWidget);
+          expect(find.byKey(const ValueKey('placar_0')), findsOneWidget);
+        } else {
+          expect(find.text('TIMES COMPLETOS'), findsOneWidget);
+          await tocar(t, find.byKey(const ValueKey('vencedor_1')));
+          await esperar(t, 900);
+          expect(find.text('CAMPEÃO'), findsOneWidget);
+        }
         if (tela == 'media' && gerarCapturas && tema == 'FUTEBOL') await capturar(t, '14_maleta_fim_$tela');
         await tocar(t, find.text('Jogar de novo'));
         await esperar(t, 600);

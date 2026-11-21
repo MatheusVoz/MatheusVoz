@@ -23,10 +23,7 @@ class AnimatedMoney extends StatefulWidget {
 }
 
 class _AnimatedMoneyState extends State<AnimatedMoney> with SingleTickerProviderStateMixin {
-  late final AnimationController _ctrl = AnimationController(
-    vsync: this,
-    duration: const Duration(milliseconds: 900),
-  );
+  late final AnimationController _ctrl = AnimationController(vsync: this, duration: const Duration(milliseconds: 900));
   late int _de = widget.valor;
   late int _para = widget.valor;
 

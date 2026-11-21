@@ -43,6 +43,8 @@ enum LanceIconType {
   teclado,
   maleta,
   mascara,
+  globo,
+  pin,
 }
 
 /// Widget que desenha um icone proprio.
@@ -122,8 +124,7 @@ class LanceIconPainter extends CustomPainter {
   Path _rr(double l, double t, double r, double b, double raio) =>
       Path()..addRRect(RRect.fromLTRBR(l, t, r, b, Radius.circular(raio)));
 
-  Path _circ(double x, double y, double r) =>
-      Path()..addOval(Rect.fromCircle(center: Offset(x, y), radius: r));
+  Path _circ(double x, double y, double r) => Path()..addOval(Rect.fromCircle(center: Offset(x, y), radius: r));
 
   Path _poli(List<Offset> pts) => Path()..addPolygon(pts, true);
 
@@ -238,6 +239,10 @@ class LanceIconPainter extends CustomPainter {
         _maleta();
       case LanceIconType.mascara:
         _mascara();
+      case LanceIconType.globo:
+        _globo();
+      case LanceIconType.pin:
+        _pin();
     }
     canvas.restore();
   }
@@ -399,6 +404,34 @@ class LanceIconPainter extends CustomPainter {
         ..lineTo(50 + 38 * math.cos(a), 50 + 38 * math.sin(a));
     }
     _detalhe(costuras, 4.5);
+  }
+
+  void _globo() {
+    _fs(_circ(50, 50, 40));
+    // Meridianos e paralelos.
+    final linhas = Path()
+      ..addOval(Rect.fromCenter(center: const Offset(50, 50), width: 34, height: 80))
+      ..moveTo(50, 10)
+      ..lineTo(50, 90)
+      ..moveTo(10, 50)
+      ..lineTo(90, 50)
+      ..moveTo(17, 30)
+      ..quadraticBezierTo(50, 38, 83, 30)
+      ..moveTo(17, 70)
+      ..quadraticBezierTo(50, 62, 83, 70);
+    _detalhe(linhas, 4.5);
+  }
+
+  void _pin() {
+    // Marcador de mapa.
+    final gota = Path()
+      ..moveTo(50, 92)
+      ..cubicTo(30, 66, 18, 52, 18, 38)
+      ..arcToPoint(const Offset(82, 38), radius: const Radius.circular(32))
+      ..cubicTo(82, 52, 70, 66, 50, 92)
+      ..close();
+    _fs(gota);
+    _fs(_circ(50, 38, 12));
   }
 
   void _hamburguer() {
@@ -599,16 +632,7 @@ class LanceIconPainter extends CustomPainter {
   }
 
   void _som(bool ligado) {
-    _fs(
-      _poli(const [
-        Offset(10, 38),
-        Offset(28, 38),
-        Offset(50, 18),
-        Offset(50, 82),
-        Offset(28, 62),
-        Offset(10, 62),
-      ]),
-    );
+    _fs(_poli(const [Offset(10, 38), Offset(28, 38), Offset(50, 18), Offset(50, 82), Offset(28, 62), Offset(10, 62)]));
     if (ligado) {
       _c.drawPath(
         Path()
@@ -726,13 +750,7 @@ class LanceIconPainter extends CustomPainter {
     for (var l = 0; l < 2; l++) {
       for (var c = 0; c < 4; c++) {
         _c.drawRRect(
-          RRect.fromLTRBR(
-            20 + c * 17.0,
-            32 + l * 14.0,
-            30 + c * 17.0,
-            40 + l * 14.0,
-            const Radius.circular(2),
-          ),
+          RRect.fromLTRBR(20 + c * 17.0, 32 + l * 14.0, 30 + c * 17.0, 40 + l * 14.0, const Radius.circular(2)),
           p,
         );
       }

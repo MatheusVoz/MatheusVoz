@@ -37,11 +37,7 @@ class HowToPlayScreen extends StatelessWidget {
       'Dê o lance que quiser, até todo o dinheiro que você tem. Só não pode passar do seu saldo.',
     ),
     (LanceIconType.pular, 'Ninguém quis?', 'Pule o item. Errou? Use Desfazer para voltar a última venda.'),
-    (
-      LanceIconType.lista,
-      'Fim do leilão',
-      'Acaba quando os itens terminam ou quando ninguém mais tem dinheiro.',
-    ),
+    (LanceIconType.lista, 'Fim do leilão', 'Acaba quando os itens terminam ou quando ninguém mais tem dinheiro.'),
     (
       LanceIconType.trofeu,
       'O juiz decide',
@@ -124,7 +120,7 @@ class _Passo extends StatelessWidget {
                   shape: BoxShape.circle,
                   color: AppColors.superficie,
                   border: Border.all(color: AppColors.neon, width: 2),
-                  boxShadow: [BoxShadow(color: AppColors.neon.withValues(alpha: 0.4), blurRadius: 14)],
+                  boxShadow: [BoxShadow(color: Color(0x14000000), blurRadius: 8, offset: Offset(0, 3))],
                 ),
                 child: LanceIcon(icone, tamanho: 40),
               ),

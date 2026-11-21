@@ -9,6 +9,7 @@ import 'campo_futebol.dart';
 import 'foto_item.dart';
 import 'glow_button.dart';
 import 'lance_icon.dart';
+import 'nota_badge.dart';
 
 /// Escalacao atual de um jogador (posicao -> nome do jogador de futebol).
 Map<Posicao, String> escalacaoDe(List<Purchase> compras) => {
@@ -60,12 +61,7 @@ Future<EscolhaPosicao> escolherPosicao(
                   SizedBox(
                     width: 64,
                     height: 64,
-                    child: FotoItem(
-                      temaId: Posicao.temaFutebol,
-                      item: item,
-                      icone: LanceIconType.jogador,
-                      raio: 32,
-                    ),
+                    child: FotoItem(temaId: Posicao.temaFutebol, item: item, icone: LanceIconType.jogador, raio: 32),
                   ),
                   const SizedBox(width: 12),
                   Expanded(
@@ -74,16 +70,22 @@ Future<EscolhaPosicao> escolherPosicao(
                       children: [
                         Text(item, maxLines: 1, overflow: TextOverflow.ellipsis, style: AppText.titulo(19)),
                         const SizedBox(height: 2),
-                        Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                          decoration: BoxDecoration(
-                            color: funcao == Funcao.goleiro ? AppColors.neon : AppColors.superficieClara,
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: Text(
-                            funcao.nome.toUpperCase(),
-                            style: AppText.texto(11, cor: AppColors.roxoEscuro, peso: FontWeight.w700),
-                          ),
+                        Row(
+                          children: [
+                            NotaBadge(nota: notaDe(item), tamanho: 13),
+                            const SizedBox(width: 6),
+                            Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                              decoration: BoxDecoration(
+                                color: funcao == Funcao.goleiro ? AppColors.neon : AppColors.superficieClara,
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: Text(
+                                funcao.nome.toUpperCase(),
+                                style: AppText.texto(11, cor: AppColors.roxoEscuro, peso: FontWeight.w700),
+                              ),
+                            ),
+                          ],
                         ),
                         const SizedBox(height: 2),
                         Text('Onde $dono vai escalar?', style: AppText.texto(13)),

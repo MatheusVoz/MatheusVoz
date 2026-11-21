@@ -44,13 +44,8 @@ class Player {
   int saldo;
   final List<Purchase> compras;
 
-  Player({
-    required this.id,
-    required this.nome,
-    required this.cor,
-    required this.saldo,
-    List<Purchase>? compras,
-  }) : compras = compras ?? [];
+  Player({required this.id, required this.nome, required this.cor, required this.saldo, List<Purchase>? compras})
+    : compras = compras ?? [];
 
   /// Total ja gasto no leilao.
   int get totalGasto => compras.fold(0, (s, c) => s + c.preco);
@@ -68,8 +63,6 @@ class Player {
     nome: j['nome'] as String,
     cor: Color(j['cor'] as int),
     saldo: j['saldo'] as int,
-    compras: (j['compras'] as List)
-        .map((e) => Purchase.fromJson(Map<String, dynamic>.from(e as Map)))
-        .toList(),
+    compras: (j['compras'] as List).map((e) => Purchase.fromJson(Map<String, dynamic>.from(e as Map))).toList(),
   );
 }

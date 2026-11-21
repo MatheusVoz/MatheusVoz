@@ -21,14 +21,9 @@ class AppText {
       TextStyle(fontFamily: fonteTexto, fontSize: tamanho, color: cor, fontWeight: peso, height: 1.25);
 
   /// Texto de botao.
-  static TextStyle botao(double tamanho, {Color cor = AppColors.branco}) => TextStyle(
-    fontFamily: fonteTexto,
-    fontSize: tamanho,
-    color: cor,
-    fontWeight: FontWeight.w700,
-    letterSpacing: 0.4,
-  );
+  static TextStyle botao(double tamanho, {Color cor = AppColors.branco}) =>
+      TextStyle(fontFamily: fonteTexto, fontSize: tamanho, color: cor, fontWeight: FontWeight.w700, letterSpacing: 0.4);
 
-  /// Sombra de brilho neon para textos.
-  static const brilho = [Shadow(color: Color(0x33FFC81F), blurRadius: 10)];
+  /// Sem sombra nos textos (visual chapado, mais limpo).
+  static const brilho = <Shadow>[];
 }

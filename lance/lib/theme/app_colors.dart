@@ -61,21 +61,20 @@ class AppColors {
   static const gradienteFundo = LinearGradient(
     begin: Alignment.topCenter,
     end: Alignment.bottomCenter,
-    colors: [Color(0xFFFFFFFF), fundo, Color(0xFFEFE6FF)],
-    stops: [0.0, 0.5, 1.0],
+    colors: [fundo, fundo],
   );
 
   /// Gradiente dos botoes principais (amarelo).
   static const gradienteBotao = LinearGradient(
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
-    colors: [Color(0xFFFFDD66), neon, Color(0xFFFFB300)],
+    colors: [neon, neon],
   );
 
   /// Gradiente roxo (card do item, destaques).
   static const gradienteRoxo = LinearGradient(
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
-    colors: [Color(0xFF9150FF), roxo, Color(0xFF5A1BC4)],
+    colors: [roxo, roxo],
   );
 }

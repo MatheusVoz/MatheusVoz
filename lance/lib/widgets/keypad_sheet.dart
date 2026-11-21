@@ -58,7 +58,7 @@ class _TecladoState extends State<_Teclado> {
           color: AppColors.superficie,
           borderRadius: BorderRadius.circular(28),
           border: Border.all(color: AppColors.roxo, width: 2),
-          boxShadow: [BoxShadow(color: AppColors.roxo.withValues(alpha: 0.5), blurRadius: 30)],
+          boxShadow: [BoxShadow(color: Color(0x14000000), blurRadius: 8, offset: Offset(0, 3))],
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -107,10 +107,7 @@ class _TecladoState extends State<_Teclado> {
                                   decoration: BoxDecoration(
                                     color: AppColors.superficieClara,
                                     borderRadius: BorderRadius.circular(16),
-                                    border: Border.all(
-                                      color: AppColors.roxo.withValues(alpha: 0.6),
-                                      width: 1.5,
-                                    ),
+                                    border: Border.all(color: AppColors.roxo.withValues(alpha: 0.6), width: 1.5),
                                   ),
                                   child: linha[i] == '<'
                                       ? Transform.scale(

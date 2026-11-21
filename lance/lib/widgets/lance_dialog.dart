@@ -31,7 +31,7 @@ Future<bool> confirmar(
               color: AppColors.superficie,
               borderRadius: BorderRadius.circular(28),
               border: Border.all(color: AppColors.roxo, width: 2),
-              boxShadow: [BoxShadow(color: AppColors.roxo.withValues(alpha: 0.5), blurRadius: 30)],
+              boxShadow: [BoxShadow(color: Color(0x14000000), blurRadius: 8, offset: Offset(0, 3))],
             ),
             child: Column(
               mainAxisSize: MainAxisSize.min,
@@ -114,10 +114,8 @@ class _Aviso extends StatefulWidget {
 }
 
 class _AvisoState extends State<_Aviso> with SingleTickerProviderStateMixin {
-  late final AnimationController _ctrl = AnimationController(
-    vsync: this,
-    duration: const Duration(milliseconds: 2600),
-  )..forward();
+  late final AnimationController _ctrl = AnimationController(vsync: this, duration: const Duration(milliseconds: 2600))
+    ..forward();
 
   @override
   void initState() {
@@ -159,7 +157,7 @@ class _AvisoState extends State<_Aviso> with SingleTickerProviderStateMixin {
                 color: AppColors.superficieClara,
                 borderRadius: BorderRadius.circular(18),
                 border: Border.all(color: AppColors.neon, width: 1.5),
-                boxShadow: [BoxShadow(color: AppColors.roxo.withValues(alpha: 0.6), blurRadius: 20)],
+                boxShadow: [BoxShadow(color: Color(0x14000000), blurRadius: 8, offset: Offset(0, 3))],
               ),
               child: Text(
                 widget.texto,

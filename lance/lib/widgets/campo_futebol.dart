@@ -82,9 +82,7 @@ class CampoFutebol extends StatelessWidget {
                         item: escalacao[pos],
                         selecionavel: selecionaveis.contains(pos),
                         mostrarNome: mostrarNomes,
-                        onTap: onEscolher == null || !selecionaveis.contains(pos)
-                            ? null
-                            : () => onEscolher!(pos),
+                        onTap: onEscolher == null || !selecionaveis.contains(pos) ? null : () => onEscolher!(pos),
                       ),
                     ),
                 ],
@@ -128,18 +126,10 @@ class _Bolinha extends StatelessWidget {
                   )
                 : null,
             border: Border.all(
-              color: selecionavel
-                  ? AppColors.neon
-                  : (item == null ? const Color(0xFF3A0E86) : AppColors.brancoPuro),
+              color: selecionavel ? AppColors.neon : (item == null ? const Color(0xFF3A0E86) : AppColors.brancoPuro),
               width: selecionavel ? lado * 0.08 : lado * 0.05,
             ),
-            boxShadow: [
-              BoxShadow(
-                color: selecionavel ? AppColors.neon.withValues(alpha: 0.8) : Colors.black26,
-                blurRadius: selecionavel ? lado * 0.3 : lado * 0.12,
-                offset: selecionavel ? Offset.zero : Offset(0, lado * 0.05),
-              ),
-            ],
+            boxShadow: [BoxShadow(color: Color(0x14000000), blurRadius: 8, offset: Offset(0, 3))],
           ),
           child: item == null
               ? Center(
@@ -149,12 +139,7 @@ class _Bolinha extends StatelessWidget {
                   ),
                 )
               : ClipOval(
-                  child: FotoItem(
-                    temaId: Posicao.temaFutebol,
-                    item: item!,
-                    icone: LanceIconType.jogador,
-                    raio: 0,
-                  ),
+                  child: FotoItem(temaId: Posicao.temaFutebol, item: item!, icone: LanceIconType.jogador, raio: 0),
                 ),
         );
         return Semantics(

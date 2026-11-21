@@ -31,7 +31,7 @@ class LanceCard extends StatelessWidget {
           colors: [Color(0xFFFFFFFF), Color(0xFFF8F4FF)],
         ),
         border: Border.all(color: borda, width: 1.5),
-        boxShadow: brilho ? [BoxShadow(color: borda.withValues(alpha: 0.5), blurRadius: 20)] : null,
+        boxShadow: brilho ? [BoxShadow(color: Color(0x14000000), blurRadius: 8, offset: Offset(0, 3))] : null,
       ),
       child: child,
     );
@@ -56,18 +56,14 @@ class SectionTitle extends StatelessWidget {
             decoration: BoxDecoration(
               color: AppColors.neon,
               borderRadius: BorderRadius.circular(3),
-              boxShadow: const [BoxShadow(color: AppColors.neon, blurRadius: 8)],
+              boxShadow: const [BoxShadow(color: Color(0x14000000), blurRadius: 8, offset: Offset(0, 3))],
             ),
           ),
           const SizedBox(width: 10),
           Expanded(
             child: Text(
               texto.toUpperCase(),
-              style: AppText.texto(
-                15,
-                cor: AppColors.lilas,
-                peso: FontWeight.w700,
-              ).copyWith(letterSpacing: 1.6),
+              style: AppText.texto(15, cor: AppColors.lilas, peso: FontWeight.w700).copyWith(letterSpacing: 1.6),
             ),
           ),
           ?trailing,

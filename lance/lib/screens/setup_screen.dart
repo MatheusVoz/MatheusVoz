@@ -70,10 +70,7 @@ class _SetupScreenState extends State<SetupScreen> {
       itensPersonalizados: widget.tema.personalizado ? widget.tema.itens : const [],
       jogadores: [
         for (var i = 0; i < _jogadores; i++)
-          PlayerSetup(
-            nome: _nomes[i].text.trim().isEmpty ? 'Jogador ${i + 1}' : _nomes[i].text.trim(),
-            corIndice: i,
-          ),
+          PlayerSetup(nome: _nomes[i].text.trim().isEmpty ? 'Jogador ${i + 1}' : _nomes[i].text.trim(), corIndice: i),
       ],
       dinheiroInicial: _dinheiro,
       quantidadeItens: _qtdItens.clamp(_minItens, _disponiveis),
@@ -162,7 +159,7 @@ class _SetupScreenState extends State<SetupScreen> {
             color: AppColors.superficie,
             borderRadius: BorderRadius.circular(20),
             border: Border.all(color: cor.withValues(alpha: 0.8), width: 2),
-            boxShadow: [BoxShadow(color: cor.withValues(alpha: 0.25), blurRadius: 12)],
+            boxShadow: [BoxShadow(color: Color(0x14000000), blurRadius: 8, offset: Offset(0, 3))],
           ),
           child: Column(
             children: [

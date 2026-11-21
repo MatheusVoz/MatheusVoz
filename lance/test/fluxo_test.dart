@@ -1,4 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:lance/data/futebol_posicoes.dart';
 import 'package:lance/main.dart';
 import 'package:lance/services/feedback_service.dart';
 import 'package:lance/state/game_controller.dart';
@@ -110,22 +111,29 @@ Future<void> jogarPartida(
   await esperar(t, 1000);
   expect(find.text('Pódio'), findsOneWidget);
   expect(game.fase, FasePartida.juiz);
-  // O podio comeca ordenado por quantidade de itens comprados.
-  final itensNoRanking = [for (final id in game.ranking) game.jogador(id).compras.length];
-  for (var i = 1; i < itensNoRanking.length; i++) {
-    expect(itensNoRanking[i - 1], greaterThanOrEqualTo(itensNoRanking[i]));
+  // O podio sempre fica em ordem de pontos.
+  for (var i = 1; i < game.ranking.length; i++) {
+    expect(game.pontos(game.ranking[i - 1]), greaterThanOrEqualTo(game.pontos(game.ranking[i])));
   }
-  // O juiz ajusta: da pontos ao ultimo colocado ate ele passar o primeiro.
-  final ultimo = game.jogador(game.ranking.last);
-  final antes = game.pontos(ultimo.id);
-  final alvo = game.pontos(game.ranking.first) + 1;
-  for (var i = antes; i < alvo; i++) {
-    await tocar(t, find.byKey(ValueKey('mais_${ultimo.id}')));
-    await esperar(t, 250);
+  if (game.pontuaPorNota) {
+    // Futebol: soma das notas dos titulares, sem botoes de pontos.
+    for (final p in game.jogadores) {
+      final soma = p.compras.where((c) => c.posicao != null).fold(0, (s, c) => s + notaDe(c.item));
+      expect(game.pontos(p.id), soma);
+    }
+    expect(find.byKey(ValueKey('mais_${game.jogadores.first.id}')), findsNothing);
+  } else {
+    // Outros temas: a galera vota; o ultimo recebe votos ate passar o primeiro.
+    final ultimo = game.jogador(game.ranking.last);
+    final alvo = game.pontos(game.ranking.first) + 1;
+    for (var i = game.pontos(ultimo.id); i < alvo; i++) {
+      await tocar(t, find.byKey(ValueKey('mais_${ultimo.id}')));
+      await esperar(t, 250);
+    }
+    await esperar(t, 900);
+    expect(game.pontos(ultimo.id), alvo);
+    expect(game.ranking.first, ultimo.id);
   }
-  await esperar(t, 900);
-  expect(game.pontos(ultimo.id), alvo);
-  expect(game.ranking.first, ultimo.id);
   if (capturas) await capturar(t, '09_podio_$tela');
 
   // Jogar de novo com as mesmas configuracoes.

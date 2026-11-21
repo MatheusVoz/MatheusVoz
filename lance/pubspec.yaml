@@ -27,10 +27,10 @@ flutter:
     - assets/fotos/futebol/
     - assets/fotos/comidas/
     - assets/fotos/bebidas/
-    - assets/fotos/aplicativos/
+    - assets/fotos/paises/
     - assets/fotos/carros/
     - assets/fotos/marcas/
-    - assets/fotos/filmes/
+    - assets/fotos/lugares/
     - assets/fotos/animais/
   fonts:
     - family: Bungee

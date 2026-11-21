@@ -231,23 +231,39 @@ void main() {
     expect(g.pontos(3), 0);
   });
 
-  test('podio: quem tem mais itens fica em primeiro', () {
-    final g = _novo(_config(4, 30));
-    g.vender(2, 1);
-    g.vender(2, 1);
-    g.vender(2, 1); // J3: 3 itens
-    g.vender(0, 1);
-    g.vender(0, 1); // J1: 2 itens
-    g.vender(3, 5); // J4: 1 item, R\$25
-    g.vender(1, 1); // J2: 1 item, R\$29 (empate: mais dinheiro na frente)
+  test('juiz no futebol: soma das notas dos titulares (reserva nao conta)', () {
+    final c = GameConfig(
+      temaId: 'futebol',
+      temaNome: 'Futebol',
+      itensPersonalizados: const [],
+      jogadores: [for (var i = 0; i < 2; i++) PlayerSetup(nome: 'J$i', corIndice: i)],
+      dinheiroInicial: 50,
+      quantidadeItens: 12,
+    );
+    final g = GameController()..persistir = false;
+    g.iniciar(c, temaPorId('futebol')!, random: Random(3));
+    final a = g.itemAtual!;
+    g.vender(0, 5);
+    g.escalarUltimo(0, Posicao.atacante);
+    final b = g.itemAtual!;
+    g.vender(1, 5);
+    g.escalarUltimo(1, Posicao.goleiro);
+    g.vender(1, 5); // reserva
     g.irParaJuiz();
-    expect(g.ranking, [2, 0, 1, 3]);
-    expect(g.pontos(2), 3);
-    g.darPonto(3, 3); // juiz ajusta: J4 vai a 4 pontos
-    expect(g.ranking.first, 3);
-    final h = GameController()..persistir = false;
-    h.carregarJson(g.toJson());
-    expect(h.pontos(3), 4);
+    expect(g.pontuaPorNota, isTrue);
+    expect(g.pontos(0), notaDe(a));
+    expect(g.pontos(1), notaDe(b));
+    g.darPonto(0, 5); // no futebol o juiz nao mexe
+    expect(g.pontos(0), notaDe(a));
+  });
+
+  test('elenco: so craques, todos com nota alta', () {
+    for (final e in elencoFutebol.entries) {
+      expect(e.value.nota, inInclusiveRange(85, 99), reason: e.key);
+    }
+    for (final craque in ['Van Basten', 'Gullit', 'Pelé', 'Maradona', 'Zidane']) {
+      expect(temaPorId('futebol')!.itens, contains(craque));
+    }
   });
 
   test('player json', () {

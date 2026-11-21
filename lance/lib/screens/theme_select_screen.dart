@@ -68,8 +68,7 @@ class ThemeSelectScreen extends StatelessWidget {
                         child: _Entrada(
                           ordem: temasProntos.length,
                           child: _CardPersonalizado(
-                            onTap: () =>
-                                Navigator.of(context).push(rotaAnimada(CustomThemeScreen(modo: modo))),
+                            onTap: () => Navigator.of(context).push(rotaAnimada(CustomThemeScreen(modo: modo))),
                           ),
                         ),
                       ),
@@ -128,7 +127,7 @@ class _CardTema extends StatelessWidget {
               colors: [Color(0xFFFFFFFF), Color(0xFFF3ECFF)],
             ),
             border: Border.all(color: AppColors.roxo.withValues(alpha: 0.85), width: 2),
-            boxShadow: [BoxShadow(color: AppColors.roxo.withValues(alpha: 0.35), blurRadius: 16)],
+            boxShadow: [BoxShadow(color: Color(0x14000000), blurRadius: 8, offset: Offset(0, 3))],
           ),
           child: LayoutBuilder(
             builder: (context, c) {
@@ -168,7 +167,7 @@ class _CardPersonalizado extends StatelessWidget {
             borderRadius: BorderRadius.circular(26),
             gradient: AppColors.gradienteBotao,
             border: Border.all(color: AppColors.branco, width: 2),
-            boxShadow: [BoxShadow(color: AppColors.neon.withValues(alpha: 0.5), blurRadius: 22)],
+            boxShadow: [BoxShadow(color: Color(0x14000000), blurRadius: 8, offset: Offset(0, 3))],
           ),
           child: Row(
             children: [
@@ -185,10 +184,7 @@ class _CardPersonalizado extends StatelessWidget {
                   children: [
                     FittedBox(
                       fit: BoxFit.scaleDown,
-                      child: Text(
-                        'TEMA PERSONALIZADO',
-                        style: AppText.titulo(16, cor: AppColors.textoSobreAmarelo),
-                      ),
+                      child: Text('TEMA PERSONALIZADO', style: AppText.titulo(16, cor: AppColors.textoSobreAmarelo)),
                     ),
                   ],
                 ),

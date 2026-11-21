@@ -55,10 +55,7 @@ class ModeSelectScreen extends StatelessWidget {
                           opacity: v.clamp(0.0, 1.0),
                           child: Transform.translate(offset: Offset(0, 24 * (1 - v)), child: c),
                         ),
-                        child: _CardModo(
-                          modo: ModoJogo.values[i],
-                          onTap: () => _escolher(context, ModoJogo.values[i]),
-                        ),
+                        child: _CardModo(modo: ModoJogo.values[i], onTap: () => _escolher(context, ModoJogo.values[i])),
                       ),
                   ],
                 ),
@@ -92,7 +89,7 @@ class _CardModo extends StatelessWidget {
               color: AppColors.superficie,
               borderRadius: BorderRadius.circular(22),
               border: Border.all(color: AppColors.roxo.withValues(alpha: 0.25), width: 1.5),
-              boxShadow: [BoxShadow(color: AppColors.roxo.withValues(alpha: 0.10), blurRadius: 16)],
+              boxShadow: [BoxShadow(color: Color(0x14000000), blurRadius: 8, offset: Offset(0, 3))],
             ),
             child: Row(
               children: [

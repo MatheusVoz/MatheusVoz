@@ -66,9 +66,7 @@ class OptionSelector<T> extends StatelessWidget {
                   : AppColors.desativado.withValues(alpha: 0.5),
               width: 2,
             ),
-            boxShadow: sel
-                ? [BoxShadow(color: AppColors.neon.withValues(alpha: 0.55), blurRadius: 18)]
-                : null,
+            boxShadow: sel ? [BoxShadow(color: Color(0x14000000), blurRadius: 8, offset: Offset(0, 3))] : null,
           ),
           child: FittedBox(
             fit: BoxFit.scaleDown,

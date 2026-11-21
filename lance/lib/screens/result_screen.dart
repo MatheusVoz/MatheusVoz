@@ -106,7 +106,9 @@ class _ResultScreenState extends State<ResultScreen> {
                             _Podio(classificacao: lista, pontos: g.pontos),
                             const SizedBox(height: 14),
                             Text(
-                              '1 ponto por item. Juiz: use + e − para ajustar',
+                              g.pontuaPorNota
+                                  ? 'Soma das notas dos titulares (reservas não contam)'
+                                  : 'Juiz: dê um voto para cada lista que a galera gostar',
                               style: AppText.texto(13, cor: AppColors.lilas.withValues(alpha: 0.75)),
                             ),
                             const SizedBox(height: 8),
@@ -128,6 +130,7 @@ class _ResultScreenState extends State<ResultScreen> {
                                         jogador: p,
                                         posicao: lista.indexOf(p) + 1,
                                         pontos: g.pontos(p.id),
+                                        ajustavel: !g.pontuaPorNota,
                                         onMais: () => _pontuar(g, p, 1),
                                         onMenos: () => _pontuar(g, p, -1),
                                       ),
@@ -288,7 +291,7 @@ class _Coluna extends StatelessWidget {
                     end: Alignment.bottomCenter,
                     colors: [AppColors.superficieClara, AppColors.superficie],
                   ),
-            boxShadow: campeao ? [BoxShadow(color: AppColors.neon.withValues(alpha: 0.45), blurRadius: 22)] : null,
+            boxShadow: campeao ? [BoxShadow(color: Color(0x14000000), blurRadius: 8, offset: Offset(0, 3))] : null,
           ),
           child: alturaBloco > 40
               ? Padding(
@@ -315,11 +318,13 @@ class _Linha extends StatelessWidget {
   final int pontos;
   final VoidCallback onMais;
   final VoidCallback onMenos;
+  final bool ajustavel;
 
   const _Linha({
     required this.jogador,
     required this.posicao,
     required this.pontos,
+    required this.ajustavel,
     required this.onMais,
     required this.onMenos,
   });
@@ -353,14 +358,15 @@ class _Linha extends StatelessWidget {
               style: AppText.texto(15, cor: AppColors.branco, peso: FontWeight.w700),
             ),
           ),
-          _BotaoPonto(mais: false, onTap: pontos > 0 ? onMenos : null, chave: 'menos_${p.id}'),
+          if (ajustavel) _BotaoPonto(mais: false, onTap: pontos > 0 ? onMenos : null, chave: 'menos_${p.id}'),
           SizedBox(
-            width: 36,
+            width: ajustavel ? 36 : 56,
             child: Center(
               child: Text('$pontos', key: ValueKey('pontos_${p.id}'), style: AppText.numero(17)),
             ),
           ),
-          _BotaoPonto(mais: true, onTap: onMais, chave: 'mais_${p.id}'),
+          if (ajustavel) _BotaoPonto(mais: true, onTap: onMais, chave: 'mais_${p.id}'),
+          if (!ajustavel) const SizedBox(width: 8),
         ],
       ),
     );

@@ -41,11 +41,7 @@ class _CustomThemeScreenState extends State<CustomThemeScreen> {
 
   /// Adiciona o texto digitado. Aceita varios itens separados por virgula ou linha.
   void _adicionar() {
-    final partes = _item.text
-        .split(RegExp(r'[,;\n]'))
-        .map((s) => s.trim())
-        .where((s) => s.isNotEmpty)
-        .toList();
+    final partes = _item.text.split(RegExp(r'[,;\n]')).map((s) => s.trim()).where((s) => s.isNotEmpty).toList();
     if (partes.isEmpty) return;
     var repetidos = 0;
     setState(() {
@@ -122,12 +118,7 @@ class _CustomThemeScreenState extends State<CustomThemeScreen> {
                           ),
                         ),
                         const SizedBox(width: 10),
-                        BotaoIcone(
-                          icone: LanceIconType.mais,
-                          onTap: _adicionar,
-                          rotulo: 'Adicionar item',
-                          tamanho: 54,
-                        ),
+                        BotaoIcone(icone: LanceIconType.mais, onTap: _adicionar, rotulo: 'Adicionar item', tamanho: 54),
                       ],
                     ),
                     const SizedBox(height: 6),
@@ -158,8 +149,7 @@ class _CustomThemeScreenState extends State<CustomThemeScreen> {
                           tween: Tween(begin: 0, end: 1),
                           duration: const Duration(milliseconds: 350),
                           curve: Curves.easeOutBack,
-                          builder: (_, v, c) =>
-                              Transform.translate(offset: Offset(40 * (1 - v), 0), child: c),
+                          builder: (_, v, c) => Transform.translate(offset: Offset(40 * (1 - v), 0), child: c),
                           child: Container(
                             padding: const EdgeInsets.fromLTRB(16, 6, 6, 6),
                             decoration: BoxDecoration(

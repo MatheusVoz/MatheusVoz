@@ -88,7 +88,9 @@ class _ReviewScreenState extends State<ReviewScreen> {
                             borderRadius: BorderRadius.circular(16),
                             color: sel ? js[i].cor : AppColors.superficieClara,
                             border: Border.all(color: js[i].cor, width: 2),
-                            boxShadow: sel ? [BoxShadow(color: js[i].cor, blurRadius: 14)] : null,
+                            boxShadow: sel
+                                ? [BoxShadow(color: Color(0x14000000), blurRadius: 8, offset: Offset(0, 3))]
+                                : null,
                           ),
                           child: Text(
                             js[i].nome,
@@ -160,7 +162,7 @@ class _ListaJogador extends StatelessWidget {
             colors: [Color(0xFFFFFFFF), Color(0xFFF6F0FF)],
           ),
           border: Border.all(color: p.cor, width: 2.5),
-          boxShadow: [BoxShadow(color: p.cor.withValues(alpha: 0.4), blurRadius: 22)],
+          boxShadow: [BoxShadow(color: Color(0x14000000), blurRadius: 8, offset: Offset(0, 3))],
         ),
         child: Column(
           children: [
@@ -171,12 +173,7 @@ class _ListaJogador extends StatelessWidget {
                   LanceIcon(LanceIconType.jogador, tamanho: 40, preenchimento: p.cor),
                   const SizedBox(width: 12),
                   Expanded(
-                    child: Text(
-                      p.nome,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: AppText.titulo(24),
-                    ),
+                    child: Text(p.nome, maxLines: 1, overflow: TextOverflow.ellipsis, style: AppText.titulo(24)),
                   ),
                 ],
               ),
@@ -208,10 +205,7 @@ class _ListaJogador extends StatelessWidget {
             Container(
               margin: const EdgeInsets.all(14),
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-              decoration: BoxDecoration(
-                color: AppColors.superficieClara,
-                borderRadius: BorderRadius.circular(18),
-              ),
+              decoration: BoxDecoration(color: AppColors.superficieClara, borderRadius: BorderRadius.circular(18)),
               child: Row(
                 children: [
                   Expanded(child: _resumo('Total gasto', 'R\$${p.totalGasto}')),

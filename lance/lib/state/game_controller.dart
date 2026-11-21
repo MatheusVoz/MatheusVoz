@@ -4,6 +4,7 @@ import 'dart:math';
 import 'package:material_ui/material_ui.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../data/futebol_posicoes.dart';
 import '../data/themes_data.dart';
 import '../models/game_config.dart';
 import '../models/game_mode.dart';
@@ -62,8 +63,7 @@ class GameController extends ChangeNotifier {
   FasePartida _fase = FasePartida.leilao;
   List<int> _ranking = [];
 
-  /// Ajuste do juiz sobre os pontos de cada jogador (id -> +/- pontos).
-  /// Os pontos comecam com 1 por item comprado.
+  /// Votos dados pelo juiz/galera a cada jogador (temas sem nota).
   final Map<int, int> _pontos = {};
 
   GameConfig? get config => _config;
@@ -73,10 +73,18 @@ class GameController extends ChangeNotifier {
   FasePartida get fase => _fase;
   List<int> get ranking => List.unmodifiable(_ranking);
 
-  /// Pontos atuais do jogador: 1 por item comprado + ajuste do juiz.
+  /// No Futebol a pontuacao e automatica: soma das notas dos titulares
+  /// (quem esta escalado no campinho; reservas nao contam).
+  bool get pontuaPorNota => usaCampo;
+
+  /// Pontos atuais do jogador.
   int pontos(int id) {
-    final base = _jogadores.where((j) => j.id == id).firstOrNull?.compras.length ?? 0;
-    return (base + (_pontos[id] ?? 0)).clamp(0, 99).toInt();
+    if (pontuaPorNota) {
+      final p = _jogadores.where((j) => j.id == id).firstOrNull;
+      if (p == null) return 0;
+      return p.compras.where((c) => c.posicao != null).fold(0, (s, c) => s + notaDe(c.item));
+    }
+    return _pontos[id] ?? 0;
   }
 
   /// Jogadores ordenados do 1o ao ultimo (mais pontos primeiro).
@@ -252,8 +260,8 @@ class GameController extends ChangeNotifier {
 
   /// O juiz da ou tira pontos de um jogador (entre 0 e 99).
   void darPonto(int id, int delta) {
-    final novo = (pontos(id) + delta).clamp(0, 99).toInt();
-    _pontos[id] = novo - jogador(id).compras.length;
+    if (pontuaPorNota) return;
+    _pontos[id] = (pontos(id) + delta).clamp(0, 99).toInt();
     _reordenar();
     _mudou();
   }

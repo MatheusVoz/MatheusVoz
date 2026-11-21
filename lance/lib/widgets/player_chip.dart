@@ -50,9 +50,7 @@ class PlayerChip extends StatelessWidget {
               color: selecionado ? AppColors.neon : cor.withValues(alpha: ativo ? 0.85 : 0.5),
               width: selecionado ? 3 : 2,
             ),
-            boxShadow: selecionado
-                ? [BoxShadow(color: cor.withValues(alpha: 0.8), blurRadius: 22, spreadRadius: 1)]
-                : null,
+            boxShadow: selecionado ? [BoxShadow(color: Color(0x14000000), blurRadius: 8, offset: Offset(0, 3))] : null,
           ),
           child: Row(
             children: [
@@ -62,7 +60,7 @@ class PlayerChip extends StatelessWidget {
                 decoration: BoxDecoration(
                   color: cor,
                   borderRadius: BorderRadius.circular(3),
-                  boxShadow: ativo ? [BoxShadow(color: cor, blurRadius: 8)] : null,
+                  boxShadow: ativo ? [BoxShadow(color: Color(0x14000000), blurRadius: 8, offset: Offset(0, 3))] : null,
                 ),
               ),
               const SizedBox(width: 8),
@@ -94,11 +92,7 @@ class PlayerChip extends StatelessWidget {
   Widget _dinheiro(double tamanho) => FittedBox(
     fit: BoxFit.scaleDown,
     alignment: Alignment.centerLeft,
-    child: AnimatedMoney(
-      valor: jogador.saldo,
-      tamanho: tamanho,
-      cor: ativo ? AppColors.branco : AppColors.desativado,
-    ),
+    child: AnimatedMoney(valor: jogador.saldo, tamanho: tamanho, cor: ativo ? AppColors.branco : AppColors.desativado),
   );
 
   Widget _status(double tamanho) => Text(
@@ -133,10 +127,7 @@ class PlayerChip extends StatelessWidget {
               motivoBloqueio == null ? _textoItens : 'sem R\$',
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
-              style: AppText.texto(
-                12,
-                cor: ativo ? AppColors.lilas : AppColors.lilas.withValues(alpha: 0.45),
-              ),
+              style: AppText.texto(12, cor: ativo ? AppColors.lilas : AppColors.lilas.withValues(alpha: 0.45)),
             ),
           ),
         ],

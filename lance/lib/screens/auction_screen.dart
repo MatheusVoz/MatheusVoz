@@ -46,10 +46,7 @@ class _AuctionScreenState extends State<AuctionScreen> with TickerProviderStateM
   );
 
   /// Animacao de "LEILAO ENCERRADO".
-  late final AnimationController _fim = AnimationController(
-    vsync: this,
-    duration: const Duration(milliseconds: 1200),
-  );
+  late final AnimationController _fim = AnimationController(vsync: this, duration: const Duration(milliseconds: 1200));
 
   /// Dados exibidos na animacao de venda.
   String _vendaJogador = '';
@@ -110,12 +107,7 @@ class _AuctionScreenState extends State<AuctionScreen> with TickerProviderStateM
   Future<void> _digitarValor() async {
     if (_selecionado == null) return;
     final p = _game.jogador(_selecionado!);
-    final v = await mostrarTecladoLance(
-      context,
-      valorInicial: _valor,
-      maximo: _game.lanceMaximo(p),
-      jogador: p.nome,
-    );
+    final v = await mostrarTecladoLance(context, valorInicial: _valor, maximo: _game.lanceMaximo(p), jogador: p.nome);
     if (v != null && mounted) setState(() => _valor = v);
   }
 
@@ -396,7 +388,7 @@ class _AuctionScreenState extends State<AuctionScreen> with TickerProviderStateM
                   color: AppColors.superficie,
                   borderRadius: BorderRadius.circular(20),
                   border: Border.all(color: sel.cor, width: 2),
-                  boxShadow: [BoxShadow(color: sel.cor.withValues(alpha: 0.4), blurRadius: 16)],
+                  boxShadow: [BoxShadow(color: Color(0x14000000), blurRadius: 8, offset: Offset(0, 3))],
                 ),
                 child: Row(
                   children: [
@@ -495,9 +487,7 @@ class _AuctionScreenState extends State<AuctionScreen> with TickerProviderStateM
           _acaoPequena(
             icone: LanceIconType.desfazer,
             rotulo: 'Desfazer',
-            descricao: ultima == null
-                ? 'Desfazer'
-                : (ultima.venda ? 'Desfazer última venda' : 'Desfazer último pulo'),
+            descricao: ultima == null ? 'Desfazer' : (ultima.venda ? 'Desfazer última venda' : 'Desfazer último pulo'),
             altura: alturaBotao,
             onTap: g.podeDesfazer && !_vendendo ? _desfazer : null,
           ),
@@ -595,10 +585,7 @@ class _AuctionScreenState extends State<AuctionScreen> with TickerProviderStateM
                               height: 80 + 180 * impacto,
                               decoration: BoxDecoration(
                                 shape: BoxShape.circle,
-                                border: Border.all(
-                                  color: _vendaCor.withValues(alpha: (1 - impacto) * 0.9),
-                                  width: 6,
-                                ),
+                                border: Border.all(color: _vendaCor.withValues(alpha: (1 - impacto) * 0.9), width: 6),
                               ),
                             ),
                           Transform.rotate(
@@ -786,10 +773,7 @@ class _ListasParciais extends StatelessWidget {
                         child: CampoFutebol(escalacao: escalacaoDe(p.compras), cor: p.cor),
                       ),
                     if (p.compras.isEmpty)
-                      Text(
-                        'Nenhum item ainda',
-                        style: AppText.texto(14, cor: AppColors.lilas.withValues(alpha: 0.6)),
-                      )
+                      Text('Nenhum item ainda', style: AppText.texto(14, cor: AppColors.lilas.withValues(alpha: 0.6)))
                     else
                       for (final c in p.compras)
                         Padding(

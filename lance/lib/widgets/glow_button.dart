@@ -67,15 +67,7 @@ class _GlowButtonState extends State<GlowButton> {
             : AppColors.roxo.withValues(alpha: fantasma ? 0.5 : 0.9),
         width: 2,
       ),
-      boxShadow: brilho > 0
-          ? [
-              BoxShadow(
-                color: AppColors.neon.withValues(alpha: _pressionado ? 0.75 : 0.45),
-                blurRadius: brilho,
-                spreadRadius: _pressionado ? 2 : 0,
-              ),
-            ]
-          : null,
+      boxShadow: brilho > 0 ? [BoxShadow(color: Color(0x14000000), blurRadius: 8, offset: Offset(0, 3))] : null,
     );
 
     final corTexto = _ativo

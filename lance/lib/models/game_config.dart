@@ -56,9 +56,7 @@ class GameConfig {
     temaId: j['temaId'] as String,
     temaNome: j['temaNome'] as String,
     itensPersonalizados: List<String>.from(j['itensPersonalizados'] as List),
-    jogadores: (j['jogadores'] as List)
-        .map((e) => PlayerSetup.fromJson(Map<String, dynamic>.from(e as Map)))
-        .toList(),
+    jogadores: (j['jogadores'] as List).map((e) => PlayerSetup.fromJson(Map<String, dynamic>.from(e as Map))).toList(),
     dinheiroInicial: j['dinheiroInicial'] as int,
     quantidadeItens: j['quantidadeItens'] as int,
   );
