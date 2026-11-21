@@ -41,7 +41,7 @@ class HowToPlayScreen extends StatelessWidget {
     (
       LanceIconType.trofeu,
       'O juiz decide',
-      'Uma pessoa de fora analisa as listas e ordena do 1º ao último. O campeão ganha a coroa!',
+      'No Futebol, cada jogador tem uma nota e vence quem tiver a maior soma de notas entre os titulares. Nos outros temas, a galera vota na melhor lista.',
     ),
     (
       LanceIconType.mascara,
@@ -51,7 +51,7 @@ class HowToPlayScreen extends StatelessWidget {
     (
       LanceIconType.maleta,
       'Modo Maleta',
-      'Cinco maletas, cada uma com um item surpresa do tema. Escolha uma e toque para abrir.',
+      'São 5 rodadas de 5 maletas. Cada um escolhe uma e as que sobram são descartadas. No Futebol, a primeira rodada é só de goleiros, depois vêm volantes, meias e atacantes.',
     ),
   ];
 
