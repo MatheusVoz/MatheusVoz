@@ -36,6 +36,13 @@
  },
  {
   "tema": "futebol",
+  "item": "Zoff",
+  "autor": "Bert Verhoeff for Anefo",
+  "licenca": "CC BY-SA 3.0 nl",
+  "fonte": "https://commons.wikimedia.org/wiki/File:Dino_Zoff_(1974).jpg"
+ },
+ {
+  "tema": "futebol",
   "item": "Oliver Kahn",
   "autor": "Steffen Prößdorf",
   "licenca": "CC BY-SA 4.0",
@@ -92,13 +99,6 @@
  },
  {
   "tema": "futebol",
-  "item": "Dida",
-  "autor": "NullReason",
-  "licenca": "CC BY-SA 3.0",
-  "fonte": "https://commons.wikimedia.org/wiki/File:Dida-wikipedia_(cropped_2).png"
- },
- {
-  "tema": "futebol",
   "item": "Ederson",
   "autor": "Bryan Berlin",
   "licenca": "CC BY-SA 4.0",
@@ -124,13 +124,6 @@
   "autor": "SOCCER DIGITAL",
   "licenca": "Public domain",
   "fonte": "https://commons.wikimedia.org/wiki/File:Rogerio-Ceni-Sao-Paulo-Juventude-jun-2022_(cropped).jpg"
- },
- {
-  "tema": "futebol",
-  "item": "Marcos",
-  "autor": "History Channel",
-  "licenca": "CC0",
-  "fonte": "https://commons.wikimedia.org/wiki/File:Marcos-history-channel-3_(cropped).png"
  },
  {
   "tema": "futebol",
@@ -400,13 +393,6 @@
  },
  {
   "tema": "futebol",
-  "item": "Mauro Silva",
-  "autor": "Refivagert",
-  "licenca": "CC BY-SA 4.0",
-  "fonte": "https://commons.wikimedia.org/wiki/File:Maurosilva.png"
- },
- {
-  "tema": "futebol",
   "item": "Gilberto Silva",
   "autor": "Web Summit",
   "licenca": "CC BY 2.0",
@@ -593,6 +579,13 @@
   "autor": "James Adams",
   "licenca": "CC BY 2.0",
   "fonte": "https://commons.wikimedia.org/wiki/File:P_Scholes.jpg"
+ },
+ {
+  "tema": "futebol",
+  "item": "Seedorf",
+  "autor": "فاطمه عموزاد",
+  "licenca": "CC BY 4.0",
+  "fonte": "https://commons.wikimedia.org/wiki/File:Clarence_Seedorf_Introductory_Press_Conferences,_2_June_2025_-_40_(cropped).jpg"
  },
  {
   "tema": "futebol",
@@ -1765,13 +1758,6 @@
  },
  {
   "tema": "bebidas",
-  "item": "Água com gás",
-  "autor": "Nevit Dilmen (talk)",
-  "licenca": "CC BY-SA 3.0",
-  "fonte": "https://commons.wikimedia.org/wiki/File:Drinking_glass_00118.gif"
- },
- {
-  "tema": "bebidas",
   "item": "Refrigerante de laranja",
   "autor": "The Coca Cola Company",
   "licenca": "Public domain",
@@ -1818,13 +1804,6 @@
   "autor": "No machine-readable author provided. Rainer Zenz assumed (based on copyright claims).",
   "licenca": "CC BY-SA 3.0",
   "fonte": "https://commons.wikimedia.org/wiki/File:Joghurt.jpg"
- },
- {
-  "tema": "bebidas",
-  "item": "Bubble tea",
-  "autor": "Howief",
-  "licenca": "CC BY-SA 3.0",
-  "fonte": "https://commons.wikimedia.org/wiki/File:Bubble_Tea.png"
  },
  {
   "tema": "bebidas",
@@ -2066,17 +2045,17 @@
  },
  {
   "tema": "bebidas",
-  "item": "Cerveja preta",
-  "autor": "55belgianbeerfan",
-  "licenca": "CC0",
-  "fonte": "https://commons.wikimedia.org/wiki/File:A_Pint_of_English_Imperial_Stout.png"
- },
- {
-  "tema": "bebidas",
   "item": "Matchá",
   "autor": "Evanhoever",
   "licenca": "CC BY-SA 4.0",
   "fonte": "https://commons.wikimedia.org/wiki/File:Matcha_Scoop.jpg"
+ },
+ {
+  "tema": "paises",
+  "item": "Brasil",
+  "autor": "Desconhecido",
+  "licenca": "PD",
+  "fonte": "https://en.wikipedia.org/wiki/File:Flag_of_Brazil.svg"
  },
  {
   "tema": "paises",
@@ -2843,13 +2822,6 @@
  },
  {
   "tema": "carros",
-  "item": "Renault Kwid",
-  "autor": "Autosdeprimera",
-  "licenca": "CC BY 3.0",
-  "fonte": "https://commons.wikimedia.org/wiki/File:2023_Renault_Kwid_Iconic_(Colombia)_front_view_01.png"
- },
- {
-  "tema": "carros",
   "item": "BYD Dolphin",
   "autor": "User3204",
   "licenca": "CC BY-SA 4.0",
@@ -2994,13 +2966,6 @@
   "autor": "© M 93",
   "licenca": "CC BY-SA 3.0 de",
   "fonte": "https://commons.wikimedia.org/wiki/File:Honda_Jazz_Hybrid_Executive_(IV)_%E2%80%93_f_18102020.jpg"
- },
- {
-  "tema": "carros",
-  "item": "Hyundai Creta",
-  "autor": "CARS WORLD Kannada",
-  "licenca": "CC BY 3.0",
-  "fonte": "https://commons.wikimedia.org/wiki/File:2024_Hyundai_Creta_1.5_MPi_SX(O)_(India)_front_view.png"
  },
  {
   "tema": "carros",
@@ -3529,6 +3494,13 @@
  },
  {
   "tema": "lugares",
+  "item": "Lençóis Maranhenses",
+  "autor": "Julius Dadalti",
+  "licenca": "CC BY-SA 4.0",
+  "fonte": "https://commons.wikimedia.org/wiki/File:Len%C3%A7%C3%B3is_Maranhenses_2018.jpg"
+ },
+ {
+  "tema": "lugares",
   "item": "Fernando de Noronha",
   "autor": "Eduardo Muruci",
   "licenca": "CC BY-SA 3.0",
@@ -3743,13 +3715,6 @@
   "autor": "Alvesgaspar",
   "licenca": "CC BY-SA 3.0",
   "fonte": "https://commons.wikimedia.org/wiki/File:Torre_Bel%C3%A9m_April_2009-4a.jpg"
- },
- {
-  "tema": "lugares",
-  "item": "Maldivas",
-  "autor": "See File history, below, for details.",
-  "licenca": "Public domain",
-  "fonte": "https://commons.wikimedia.org/wiki/File:Flag_of_Maldives.svg"
  },
  {
   "tema": "lugares",
@@ -4387,13 +4352,6 @@
   "autor": "Hans Hillewaert",
   "licenca": "CC BY-SA 4.0",
   "fonte": "https://commons.wikimedia.org/wiki/File:Hippocampus_hippocampus_(on_Ascophyllum_nodosum).jpg"
- },
- {
-  "tema": "animais",
-  "item": "Estrela-do-mar",
-  "autor": "Top left: Klaus Rassinger (Museum Wiesbaden)\nTop right: Katie Ahlfeld\nBottom right: Jon Zander (Digon3)\n\nBottom left: Es",
-  "licenca": "CC BY-SA 4.0",
-  "fonte": "https://commons.wikimedia.org/wiki/File:Starfish_montage.png"
  },
  {
   "tema": "animais",
