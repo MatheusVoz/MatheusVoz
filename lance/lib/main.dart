@@ -1,0 +1,54 @@
+import 'package:flutter/services.dart';
+import 'package:material_ui/material_ui.dart';
+import 'package:provider/provider.dart';
+
+import 'screens/menu_screen.dart';
+import 'services/feedback_service.dart';
+import 'state/game_controller.dart';
+import 'state/settings_controller.dart';
+import 'theme/app_theme.dart';
+
+/// Ponto de entrada do LANCE!
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  // Jogo pensado para celular em pe.
+  await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+  SystemChrome.setSystemUIOverlayStyle(
+    const SystemUiOverlayStyle(
+      statusBarColor: Colors.transparent,
+      statusBarIconBrightness: Brightness.dark,
+      systemNavigationBarColor: Color(0xFFEFE6FF),
+      systemNavigationBarIconBrightness: Brightness.dark,
+    ),
+  );
+
+  final settings = SettingsController();
+  await settings.carregar();
+  final game = GameController();
+  await game.restaurar();
+  FeedbackService.instancia.conectar(settings);
+
+  runApp(LanceApp(settings: settings, game: game));
+}
+
+class LanceApp extends StatelessWidget {
+  final SettingsController settings;
+  final GameController game;
+  const LanceApp({super.key, required this.settings, required this.game});
+
+  @override
+  Widget build(BuildContext context) {
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider.value(value: settings),
+        ChangeNotifierProvider.value(value: game),
+      ],
+      child: MaterialApp(
+        title: 'LANCE!',
+        debugShowCheckedModeBanner: false,
+        theme: AppTheme.tema,
+        home: const MenuScreen(),
+      ),
+    );
+  }
+}
